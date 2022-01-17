@@ -69,12 +69,12 @@ class PROXQPSolver(object):
         n_eq = A.shape[0]
         n_in = C.shape[0]
 
-        model = inria_ldlt_py.Qpdata(n,n_eq,n_in)
-        results = inria_ldlt_py.Qpresults(n,n_eq,n_in)
-        prox_settings = inria_ldlt_py.Qpsettings()
-        work = inria_ldlt_py.Qpworkspace(n,n_eq,n_in)
-        #prox_settings._max_iter = 10
-        #prox_settings._max_iter_in = 100
+        model = inria_ldlt_py.QPData(n,n_eq,n_in)
+        results = inria_ldlt_py.QPResults(n,n_eq,n_in)
+        prox_settings = inria_ldlt_py.QPSettings()
+        work = inria_ldlt_py.QPWorkspace(n,n_eq,n_in)
+        #prox_settings.max_iter = 1000
+        #prox_settings.max_iter_in = 1500
 
         inria_ldlt_py.QPsetup(
                 np.asfortranarray(H.toarray()),
@@ -97,26 +97,26 @@ class PROXQPSolver(object):
         #print("prox_settings._eps_abs : {}".format(prox_settings._eps_abs))
         #print("prox_settings._eps_rel : {}".format(prox_settings._eps_rel))
         
-        inria_ldlt_py.oldNewQPsolve(
+        inria_ldlt_py.QPsolve(
             model,
             results,
             work,
             prox_settings)
     
         # duration time
-        run_time = results._timing * 1.e-6 # the run_time is measured in microseconds 
+        run_time = results.timing * 1.e-6 # the run_time is measured in microseconds 
 
         # Obj val
-        objval = results._objValue
+        objval = results.objValue
 
         # Total Number of iterations
-        niter = results._n_tot
+        niter = results.n_tot
 
         # Get solution
-        x = results._x 
+        x = results.x 
         y = np.zeros(n_eq+n_in)
-        y[eq_ids] = results._y
-        y[in_ids] = results._z
+        y[eq_ids] = results.y
+        y[in_ids] = results.z
 
         if not is_qp_solution_optimal(problem, x, y,
                                         high_accuracy=self._settings.get('high_accuracy')):

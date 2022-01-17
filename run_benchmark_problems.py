@@ -23,7 +23,7 @@ import inria_ldlt_py
 parser = argparse.ArgumentParser(description='Benchmark Problems Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=False,
+parser.add_argument('--verbose', help='Verbose solvers', default=True,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
