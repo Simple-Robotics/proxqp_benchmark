@@ -21,7 +21,8 @@ def plot_performance_profiles(problems, solvers):
         if "polish" in s:
             solvers.remove(s)
 
-    df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
+    #df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
+    df = pd.read_csv('./results/benchmark_problems_high_accuracy/performance_profiles.csv' % problems)
     plt.figure(0)
     for solver in solvers:
         plt.plot(df["tau"], df[solver], label=solver)
@@ -33,7 +34,8 @@ def plot_performance_profiles(problems, solvers):
     plt.legend()
     plt.grid()
     plt.show(block=False)
-    results_file = './results/%s/%s.png' % (problems, problems)
+    #results_file = './results/%s/%s.png' % (problems, problems)
+    results_file = './results/benchmark_problems_high_accuracy/%s.png' % problems
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
 
@@ -46,8 +48,10 @@ def get_cumulative_data(solvers, problems, output_folder):
 
         # Initialize cumulative results
         results = []
+        print("path : {}".format(path))
         for problem in problems:
             file_name = os.path.join(path, problem, 'full.csv')
+            print("file_name : {}".format(file_name))
             results.append(pd.read_csv(file_name))
 
         # Create cumulative dataframe
@@ -124,6 +128,49 @@ def compute_performance_profiles(solvers, problems_type):
     # plt.grid()
     # plt.xscale('log')
     # plt.show(block=False)
+
+
+def compute_time_series_plot(solvers, problems_type, suffix):
+    t = {}
+    status = {}
+    N = {}
+
+    # Get time and status
+    for solver in solvers:
+        path = os.path.join('.', 'results/benchmark_problems_high_accuracy/',solver, problems_type + suffix
+                            , 'full.csv')
+        df = pd.read_csv(path)
+
+        # Get total number of problems
+        n_problems = len(df)
+
+        t[solver] = df['run_time'].values
+        status[solver] = df['status'].values
+        N[solver] = df['n'].values
+
+        # Set maximum time for solvers that did not succeed
+        for idx in range(n_problems):
+            if status[solver][idx] not in statuses.SOLUTION_PRESENT:
+                t[solver][idx] = MAX_TIMING
+
+    # Compute curve for all solvers
+
+    plt.figure(0)
+    for solver in solvers:
+        plt.plot(N[solver], t[solver], label=solver)
+    #plt.xlim(1., 100000.)
+    #plt.ylim(0., 1.)
+    plt.xlabel('n')
+    plt.ylabel('Timings (s)')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.legend()
+    plt.grid()
+    plt.show(block=False)
+    #results_file = './results/%s/%s.png' % (problems, problems)
+    results_file = './results/benchmark_problems_high_accuracy/time_series_plot_' + suffix + ".png"
+    print("Saving plots to %s" % results_file)
+    plt.savefig(results_file)
 
 def geom_mean(t, shift=10.):
     """Compute the shifted geometric mean using formula from
@@ -368,7 +415,7 @@ def compute_stats_info(solvers, benchmark_type,
     compute_shifted_geometric_means(solvers, benchmark_type)
 
     # Compute polish statistics
-    if any(s.startswith('OSQP') for s in solvers):
+    if any(s.startswith('OSQP') for s in solvers) and False:
         compute_polish_statistics(benchmark_type, high_accuracy=high_accuracy)
         compute_ratio_setup_solve(benchmark_type, high_accuracy=high_accuracy)
         compute_rho_updates(benchmark_type, high_accuracy=high_accuracy)

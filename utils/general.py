@@ -79,10 +79,12 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
     '''
     if high_accuracy:
         eps_abs = s.eps_high
-        eps_rel = s.eps_high
+        eps_rel = 0
+        #eps_rel = s.eps_high
     else:
         eps_abs=s.eps_low
-        eps_rel=s.eps_low
+        eps_rel = 0
+        #eps_rel=s.eps_low
 
     # Get problem matrices
     P = qp_problem['P']

@@ -3,9 +3,9 @@ import scipy.sparse as spa
 import cvxpy
 
 
-class RandomQPExample(object):
+class RandomMixedQPExample(object):
     '''
-    Random QP example
+    Random Mixed QP example
     '''
     def __init__(self, n, seed=1):
         '''
@@ -14,30 +14,36 @@ class RandomQPExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        m = int(n / 2)
+        m = 2 * int(n/2)
+
+        n_eq = int(n/2)
+        n_in = int(n/2)
 
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=1.,
+        P = spa.random(n, n, density=0.5,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc() + 1e-02 * spa.eye(n)
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=1.,
+        self.A = spa.random(m, n, density=0.5,
                             data_rvs=np.random.randn,
                             format='csc')
         v = np.random.randn(n)   # Fictitious solution
         delta = np.random.rand(m)  # To get inequality
-        self.u = self.A@v + delta
-        self.l = - np.inf * np.ones(m)  # self.u - np.random.rand(m)
+        self.u = self.A@v
+        self.l = (- np.inf * np.ones(m)) # self.u - np.random.rand(m)
+
+        self.u[n_in:] += delta[n_in:]
+        self.l[:n_eq] = self.u[:n_eq]
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()
 
     @staticmethod
     def name():
-        return 'Random QP'
+        return 'Random Mixed QP'
 
     def _generate_qp_problem(self):
         '''

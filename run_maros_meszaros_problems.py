@@ -9,13 +9,13 @@ This code tests the solvers:
 '''
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
 import solvers.solvers as s
-from utils.benchmark import compute_stats_info
+from utils.benchmark import compute_stats_info,plot_performance_profiles
 import os
 import argparse
 
 
 parser = argparse.ArgumentParser(description='Maros Meszaros Runner')
-parser.add_argument('--high_accuracy', help='Test with high accuracy', default=False,
+parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
 parser.add_argument('--verbose', help='Verbose solvers', default=False,
                     action='store_true')
@@ -32,7 +32,8 @@ print('parallel', parallel)
 
 # Add high accuracy solvers when accurazy
 if high_accuracy:
-    solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
+    #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
+    solvers = [s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high]
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True

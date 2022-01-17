@@ -86,7 +86,13 @@ class MarosMeszarosRunner(object):
                 else:
                     results = []
                     for problem in self.problems:
-                        results.append(self.solve_single_example(problem,
+                        # preprocessing
+                        full_name = os.path.join(".", "problem_classes",
+                                 PROBLEMS_FOLDER, problem)
+                        instance = MarosMeszaros(full_name)
+                        if (instance.qp_problem['P'].nnz <=5000 and instance.qp_problem['A'].nnz <= 5000):
+
+                            results.append(self.solve_single_example(problem,
                                                                  solver,
                                                                  settings))
                 # Create dataframe
@@ -124,8 +130,6 @@ class MarosMeszarosRunner(object):
                                  PROBLEMS_FOLDER, problem)
         instance = MarosMeszaros(full_name)
 
-        print(" - Solving %s with solver %s" % (problem, solver))
-
         # Solve problem
         s = SOLVER_MAP[solver](settings)
         results = s.solve(instance)
@@ -134,6 +138,8 @@ class MarosMeszarosRunner(object):
         P = instance.qp_problem['P']
         A = instance.qp_problem['A']
         N = P.nnz + A.nnz
+
+        print(" - Solving %s with solver %s P.nnz %s A.nnz %s" % (problem, solver, P.nnz, A.nnz))        
 
         # Add constant part to objective value
         # NB. This is needed to match the objective in the original
@@ -166,7 +172,7 @@ class MarosMeszarosRunner(object):
                          'N': [N]}
 
         # Add status polish if OSQP
-        if solver[:4] == 'OSQP':
+        if solver[:4] == 'OSQP'and False:
             solution_dict['status_polish'] = results.status_polish
             solution_dict['setup_time'] = results.setup_time
             solution_dict['solve_time'] = results.solve_time

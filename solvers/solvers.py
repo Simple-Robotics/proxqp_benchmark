@@ -4,6 +4,10 @@ from solvers.mosek import MOSEKSolver
 from solvers.osqp import OSQPSolver
 from solvers.qpoases import qpOASESSolver
 
+from solvers.proxqp import PROXQPSolver
+from solvers.quadprog import QUADPROGSolver
+from solvers.qpalm import QPALMSolver
+
 ECOS = 'ECOS'
 ECOS_high = ECOS + "_high"
 GUROBI = 'GUROBI'
@@ -15,6 +19,9 @@ OSQP_polish_high = OSQP_polish + '_high'
 MOSEK = 'MOSEK'
 MOSEK_high = MOSEK + "_high"
 qpOASES = 'qpOASES'
+PROXQP = 'PROXQP'
+quadprog = 'quadprog'
+QPALM = "QPALM"
 
 # solvers = [ECOSSolver, GUROBISolver, MOSEKSolver, OSQPSolver]
 # SOLVER_MAP = {solver.name(): solver for solver in solvers}
@@ -29,37 +36,49 @@ SOLVER_MAP = {OSQP: OSQPSolver,
               MOSEK_high: MOSEKSolver,
               ECOS: ECOSSolver,
               ECOS_high: ECOSSolver,
-              qpOASES: qpOASESSolver}
+              qpOASES: qpOASESSolver,
+              PROXQP : PROXQPSolver,
+              QPALM : QPALMSolver,
+              quadprog : QUADPROGSolver}
 
 time_limit = 1000. # Seconds
 eps_low = 1e-03
-eps_high = 1e-05
+eps_high = 1e-09
 
 # Solver settings
 settings = {
+    PROXQP: {'eps_abs': eps_high,
+                'eps_rel': 0.
+    },
+    QPALM: {'eps_abs': eps_high,
+                'eps_rel': 0.,
+                'max_iter': int(1e09),
+                'eps_prim_inf': 1e-15,
+                'eps_dual_inf': 1e-15,
+    },
     OSQP: {'eps_abs': eps_low,
-           'eps_rel': eps_low,
+           'eps_rel': 0.,
            'polish': False,
            'max_iter': int(1e09),
            'eps_prim_inf': 1e-15,  # Disable infeas check
            'eps_dual_inf': 1e-15,
     },
     OSQP_high: {'eps_abs': eps_high,
-                'eps_rel': eps_high,
+                'eps_rel': 0.,
                 'polish': False,
                 'max_iter': int(1e09),
                 'eps_prim_inf': 1e-15,  # Disable infeas check
                 'eps_dual_inf': 1e-15
     },
     OSQP_polish: {'eps_abs': eps_low,
-                  'eps_rel': eps_low,
+                  'eps_rel': 0.,
                   'polish': True,
                   'max_iter': int(1e09),
                   'eps_prim_inf': 1e-15,  # Disable infeas check
                   'eps_dual_inf': 1e-15
     },
     OSQP_polish_high: {'eps_abs': eps_high,
-                       'eps_rel': eps_high,
+                       'eps_rel': 0.,
                        'polish': True,
                        'max_iter': int(1e09),
                        'eps_prim_inf': 1e-15,  # Disable infeas check
@@ -82,10 +101,11 @@ settings = {
                  'MSK_DPAR_INTPNT_CO_TOL_DFEAS': eps_high,   # Dual feasibility tolerance
                 },
     ECOS: {'abstol': eps_low,
-           'reltol': eps_low},
+           'reltol': 0.},
     ECOS_high: {'abstol': eps_high,
-                'reltol': eps_high},
-    qpOASES: {}
+                'reltol': 0.},
+    qpOASES: {},
+    quadprog: {}
 }
 
 for key in settings:

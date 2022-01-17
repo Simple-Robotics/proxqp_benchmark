@@ -5,6 +5,9 @@ import pandas as pd
 
 from solvers.solvers import SOLVER_MAP
 from problem_classes.random_qp import RandomQPExample
+
+from problem_classes.random_mixed_qp import RandomMixedQPExample
+
 from problem_classes.eq_qp import EqQPExample
 from problem_classes.portfolio import PortfolioExample
 from problem_classes.lasso import LassoExample
@@ -13,7 +16,11 @@ from problem_classes.huber import HuberExample
 from problem_classes.control import ControlExample
 from utils.general import make_sure_path_exists
 
-examples = [RandomQPExample,
+
+
+examples = [
+            RandomMixedQPExample,
+            RandomQPExample,
             EqQPExample,
             PortfolioExample,
             LassoExample,
@@ -172,7 +179,7 @@ class Example(object):
                          'N': [N]}
 
         # Add status polish if OSQP
-        if solver[:4] == 'OSQP':
+        if solver[:4] == 'OSQP' and False:
             solution_dict['status_polish'] = results.status_polish
             solution_dict['setup_time'] = results.setup_time
             solution_dict['solve_time'] = results.solve_time
