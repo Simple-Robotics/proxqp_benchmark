@@ -135,6 +135,9 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     status = {}
     N = {}
 
+    err_min = {}
+    err_max = {}
+
     # Get time and status
     for solver in solvers:
         path = os.path.join('.', 'results/benchmark_problems_high_accuracy/',solver, problems_type + suffix
@@ -144,9 +147,21 @@ def compute_time_series_plot(solvers, problems_type, suffix):
         # Get total number of problems
         n_problems = len(df)
 
-        t[solver] = df['run_time'].values
+        #t[solver] = df['run_time'].values
+
+        t[solver] = df.groupby(["n"])["run_time"].median().tolist()
+        #print("t[solver] : {}".format(t[solver]))
+        err_min[solver] = df.groupby(["n"])["run_time"].min().tolist()
+        err_max[solver] = df.groupby(["n"])["run_time"].max().tolist()
+
+        N[solver] = df['n'].values.tolist()
+        N[solver] = list(set(N[solver]))
+        N[solver].sort()
+        #print("N[solver]  : {}".format(N[solver]))
+
         status[solver] = df['status'].values
-        N[solver] = df['n'].values
+        #N[solver] = df['n'].values
+        
 
         # Set maximum time for solvers that did not succeed
         for idx in range(n_problems):
@@ -154,10 +169,12 @@ def compute_time_series_plot(solvers, problems_type, suffix):
                 t[solver][idx] = MAX_TIMING
 
     # Compute curve for all solvers
-
+    
     plt.figure(0)
     for solver in solvers:
-        plt.plot(N[solver], t[solver], label=solver)
+        y_error = np.vstack(( np.array(t[solver]) - np.array(err_min[solver]), np.array(err_max[solver]) - np.array(t[solver])  ))
+        #plt.plot(N[solver], t[solver], label=solver)
+        plt.errorbar(N[solver], t[solver],yerr = y_error, label=solver,fmt ='o')
     #plt.xlim(1., 100000.)
     #plt.ylim(0., 1.)
     plt.xlabel('n')
@@ -168,7 +185,7 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     plt.grid()
     plt.show(block=False)
     #results_file = './results/%s/%s.png' % (problems, problems)
-    results_file = './results/benchmark_problems_high_accuracy/time_series_plot_' + suffix + ".png"
+    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + suffix + ".png"
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
 
@@ -421,5 +438,5 @@ def compute_stats_info(solvers, benchmark_type,
         compute_rho_updates(benchmark_type, high_accuracy=high_accuracy)
 
     # Plot performance profiles
-    if performance_profiles:
+    if performance_profiles and False:
         plot_performance_profiles(benchmark_type, solvers)
