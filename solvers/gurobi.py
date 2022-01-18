@@ -140,7 +140,36 @@ class GUROBISolver(object):
         # Update model
         model.update()
 
+
         # Solve problem
+
+        run_time = 0
+        n_solving = 10
+        for i in range(n_solving):
+
+            try:
+                model.optimize()
+            except:  # Error in the solution
+                if self._settings['verbose']:
+                    print("Error in GUROBI solution\n")
+                run_time = model.Runtime
+                return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
+
+            run_time += model.Runtime
+            model.reset(0)
+
+        try:
+                model.optimize()
+        except:  # Error in the solution
+                if self._settings['verbose']:
+                    print("Error in GUROBI solution\n")
+                run_time = model.Runtime
+                return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
+        run_time += model.Runtime
+        n_solving +=1
+        run_time /= n_solving
+
+        '''
         try:
             model.optimize()
         except:  # Error in the solution
@@ -148,6 +177,7 @@ class GUROBISolver(object):
                 print("Error in GUROBI solution\n")
             run_time = model.Runtime
             return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
+        '''
 
         # Get status
         status = self.STATUS_MAP.get(model.Status, s.SOLVER_ERROR)

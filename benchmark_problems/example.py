@@ -116,6 +116,28 @@ class Example(object):
                                                           solver,
                                                           settings)
                                 )
+                            if solver in ['qpOASES',"MOSEK_high"]:
+                                # there is no reset function to reset the workspace while keeping it in memory
+                                run_time = 0
+                                n_solving = 10
+                                for i in range(n_solving):
+                                    res = self.solve_single_example(n,
+                                                          instance,
+                                                          solver,
+                                                          settings)
+                                    run_time+=res.run_time
+                                    
+                                res = self.solve_single_example(n,
+                                                          instance,
+                                                          solver,
+                                                          settings)
+                                n_results.append(
+                                    res
+                                )
+                                run_time += res.run_time
+                                n_solving+=1
+                                run_time/= n_solving
+                                    
 
                     # Combine n_results
                     df = pd.concat(n_results)

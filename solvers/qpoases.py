@@ -111,7 +111,7 @@ class qpOASESSolver(object):
             elif param != "high_accuracy":
                 exec("options.%s = %s" % (param, value))
 
-        qpoases_m.setOptions(options)
+        qpoases_m.setOptions(options) 
 
         if 'time_limit' not in self._settings:
             # Set default to max 10 seconds in runtime
@@ -130,7 +130,7 @@ class qpOASESSolver(object):
 
         # run_time
         run_time = qpoases_cpu_time[0]
-
+        
         # number of iterations
         niter = qpoases_nWSR[0]
 

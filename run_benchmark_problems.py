@@ -39,7 +39,7 @@ print('parallel', parallel)
 # Add high accuracy solvers when accuracy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers = [s.OSQP_high,s.PROXQP] # qpalm crashes as well (segfault..)  s.OSQP_high,s.PROXQP,s.GUROBI_high,
+    solvers = [s.GUROBI_high,s.qpOASES,s.MOSEK_high] # qpalm crashes as well (segfault..)  s.OSQP_high,s.PROXQP,s.GUROBI_high,
     OUTPUT_FOLDER = 'benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
