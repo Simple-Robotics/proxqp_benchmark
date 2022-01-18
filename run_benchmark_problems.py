@@ -23,7 +23,7 @@ import inria_ldlt_py
 parser = argparse.ArgumentParser(description='Benchmark Problems Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=True,
+parser.add_argument('--verbose', help='Verbose solvers', default=False,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -103,10 +103,10 @@ for problem in problems:
                       n_instances
                       )
     example.solve(parallel=problem_parallel[problem])
-
+'''
 # Compute results statistics
 
-'''
+
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    problems=problems,
                    high_accuracy=high_accuracy)
@@ -115,7 +115,7 @@ plot_performance_profiles(problems, solvers)
 
 # plots 
 
-problems_type = 'Random Mixed QP'
+problems_type = 'Random QP'
 suffix = ''
 #_m=0.5n_density1
 compute_time_series_plot(solvers, problems_type, suffix)

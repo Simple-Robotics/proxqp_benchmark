@@ -2,6 +2,7 @@ import osqp
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
+from scipy import sparse
 
 
 class OSQPSolver(object):
@@ -44,7 +45,26 @@ class OSQPSolver(object):
                 **settings)
 
         # Solve
+        
+        run_time = 0
+        n_solving = 10
+        for i in range(n_solving):
+
+            results = m.solve()
+            run_time += results.info.run_time
+            m = osqp.OSQP()
+            m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
+                problem['u'],
+                **settings)
+
+
         results = m.solve()
+        run_time += results.info.run_time
+        n_solving +=1
+        run_time /= n_solving
+
+
+
         status = self.STATUS_MAP.get(results.info.status_val, s.SOLVER_ERROR)
 
         if status in s.SOLUTION_PRESENT:
@@ -56,14 +76,16 @@ class OSQPSolver(object):
 
         # Verify solver time
         if settings.get('time_limit') is not None:
-            if results.info.run_time > settings.get('time_limit'):
+            #if results.info.run_time > settings.get('time_limit'):
+            if run_time > settings.get('time_limit'):
                 status = s.TIME_LIMIT
 
         return_results = Results(status,
                                  results.info.obj_val,
                                  results.x,
                                  results.y,
-                                 results.info.run_time,
+                                 #results.info.run_time,
+                                 run_time,
                                  results.info.iter)
 
         return_results.status_polish = results.info.status_polish

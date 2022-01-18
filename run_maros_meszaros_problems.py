@@ -17,7 +17,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Maros Meszaros Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=False,
+parser.add_argument('--verbose', help='Verbose solvers', default=True,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -33,7 +33,8 @@ print('parallel', parallel)
 # Add high accuracy solvers when accurazy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
-    solvers = [s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high]
+    #solvers = [s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high]
+    solvers = [ s.PROXQP]
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True

@@ -96,15 +96,32 @@ class PROXQPSolver(object):
 
         #print("prox_settings._eps_abs : {}".format(prox_settings._eps_abs))
         #print("prox_settings._eps_rel : {}".format(prox_settings._eps_rel))
-        
+        run_time = 0
+        n_solving = 10
+        for i in range(n_solving):
+            inria_ldlt_py.QPsolve(
+                model,
+                results,
+                work,
+                prox_settings)
+            run_time += results.timing
+            inria_ldlt_py.QPreset(
+                model,
+                prox_settings,
+                results,
+                work
+            )
         inria_ldlt_py.QPsolve(
             model,
             results,
             work,
             prox_settings)
+        run_time += results.timing
+        n_solving += 1
     
         # duration time
-        run_time = results.timing * 1.e-6 # the run_time is measured in microseconds 
+        #run_time = results.timing * 1.e-6 # the run_time is measured in microseconds 
+        run_time /= (1.e6 * n_solving) # the run_time is measured in microseconds 
 
         # Obj val
         objval = results.objValue
