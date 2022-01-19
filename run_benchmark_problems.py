@@ -7,6 +7,7 @@ This code tests the solvers:
     - MOSEK
     - ECOS (crash always..)
     - qpOASES
+    - quadprog
 
 
     - QPALM (error to fix)
@@ -23,7 +24,7 @@ import inria_ldlt_py
 parser = argparse.ArgumentParser(description='Benchmark Problems Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=False,
+parser.add_argument('--verbose', help='Verbose solvers', default=True,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -39,7 +40,7 @@ print('parallel', parallel)
 # Add high accuracy solvers when accuracy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers = [s.GUROBI_high,s.qpOASES,s.MOSEK_high] # qpalm crashes as well (segfault..)  s.OSQP_high,s.PROXQP,s.GUROBI_high,
+    solvers =  [s.quadprog] # [s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES] # qpalm crashes as well (segfault..)  ,
     OUTPUT_FOLDER = 'benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -54,6 +55,7 @@ if verbose:
 # Number of instances per different dimension
 n_instances = 5 # 10 à la base #1 
 n_dim = 10 # 20 à la base
+n_average = 10
 
 
 # Run benchmark problems
@@ -96,16 +98,20 @@ problem_parallel = {'Random QP': parallel,
 
 for problem in problems:
     example = Example(problem,
-                      problem_dimensions[problem],
+                      #problem_dimensions[problem],
+                      [10],
                       solvers,
                       s.settings,
                       OUTPUT_FOLDER,
-                      n_instances
+                      1,
+                      1
+                      #n_instances,
+                      #n_average
                       )
     example.solve(parallel=problem_parallel[problem])
-'''
-# Compute results statistics
 
+# Compute results statistics
+'''
 
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    problems=problems,
@@ -115,7 +121,7 @@ plot_performance_profiles(problems, solvers)
 
 # plots 
 
-problems_type = 'Random QP'
+problems_type = 'Random Mixed QP'
 suffix = ''
 #_m=0.5n_density1
 compute_time_series_plot(solvers, problems_type, suffix)

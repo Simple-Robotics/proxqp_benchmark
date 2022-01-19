@@ -28,7 +28,7 @@ class qpOASESSolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example):
+    def solve(self, example,n_average):
         '''
         Solve problem
 
@@ -130,7 +130,7 @@ class qpOASESSolver(object):
 
         # run_time
         run_time = qpoases_cpu_time[0]
-        
+
         # number of iterations
         niter = qpoases_nWSR[0]
 

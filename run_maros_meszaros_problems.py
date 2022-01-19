@@ -55,7 +55,7 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
 # DEBUG only: Choose only 2 problems
 # maros_meszaros_runner.problems = ["STADAT1", "BOYD1"]
 
-maros_meszaros_runner.solve(parallel=parallel, cores=12)
+maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=0)
 
 # Compute results statistics
 compute_stats_info(solvers, OUTPUT_FOLDER,

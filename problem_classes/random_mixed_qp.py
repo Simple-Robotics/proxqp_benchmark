@@ -14,20 +14,20 @@ class RandomMixedQPExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        m = 2 * int(n/2)
+        m = 2 * int(n/3)
 
-        n_eq = int(n/2)
-        n_in = int(n/2)
+        n_eq = int(n/3)
+        n_in = int(n/3)
 
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=0.5,
+        P = spa.random(n, n, density=0.15,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc() + 1e-02 * spa.eye(n)
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=0.5,
+        self.A = spa.random(m, n, density=0.15,
                             data_rvs=np.random.randn,
                             format='csc')
         v = np.random.randn(n)   # Fictitious solution

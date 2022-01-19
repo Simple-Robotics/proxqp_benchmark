@@ -31,7 +31,7 @@ class GUROBISolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example):
+    def solve(self, example,n_average):
         '''
         Solve problem
 
@@ -144,7 +144,7 @@ class GUROBISolver(object):
         # Solve problem
 
         run_time = 0
-        n_solving = 10
+        n_solving = n_average
         for i in range(n_solving):
 
             try:

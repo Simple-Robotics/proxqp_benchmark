@@ -40,7 +40,8 @@ class Example(object):
                  solvers,
                  settings,
                  output_folder,
-                 n_instances=10):
+                 n_instances=10,
+                 n_average=10):
         self.name = name
         self.dims = dims
         self.n_instances = n_instances
@@ -48,7 +49,7 @@ class Example(object):
         self.settings = settings
         self.output_folder = output_folder
 
-    def solve(self, parallel=True):
+    def solve(self, parallel=True,n_average=10):
         '''
         Solve problems of type example
 
@@ -110,33 +111,39 @@ class Example(object):
                     else:
                         n_results = []
                         for instance in range(self.n_instances):
-                            n_results.append(
-                                self.solve_single_example(n,
-                                                          instance,
-                                                          solver,
-                                                          settings)
-                                )
-                            if solver in ['qpOASES',"MOSEK_high"]:
+                            if solver in ['qpOASES',"MOSEK_high","quadprog"]:
                                 # there is no reset function to reset the workspace while keeping it in memory
                                 run_time = 0
-                                n_solving = 10
+                                n_solving = n_average
                                 for i in range(n_solving):
                                     res = self.solve_single_example(n,
                                                           instance,
                                                           solver,
-                                                          settings)
+                                                          settings,
+                                                          n_average)
                                     run_time+=res.run_time
                                     
                                 res = self.solve_single_example(n,
                                                           instance,
                                                           solver,
-                                                          settings)
-                                n_results.append(
-                                    res
-                                )
+                                                          settings,
+                                                          n_average)
                                 run_time += res.run_time
                                 n_solving+=1
                                 run_time/= n_solving
+                                res.run_time = run_time
+                                n_results.append(
+                                    res
+                                )
+                            else:
+                                n_results.append(
+                                    self.solve_single_example(n,
+                                                            instance,
+                                                            solver,
+                                                            settings,
+                                                            n_average)
+                                )
+                                
                                     
 
                     # Combine n_results
@@ -164,7 +171,7 @@ class Example(object):
 
     def solve_single_example(self,
                              dimension, instance_number,
-                             solver, settings):
+                             solver, settings,n_average):
         '''
         Solve 'example' with 'solver'
 
@@ -185,7 +192,7 @@ class Example(object):
 
         # Solve problem
         s = SOLVER_MAP[solver](settings)
-        results = s.solve(example_instance)
+        results = s.solve(example_instance,n_average)
 
         # Create solution as pandas table
         P = example_instance.qp_problem['P']

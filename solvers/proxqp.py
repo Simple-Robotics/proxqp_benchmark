@@ -32,7 +32,7 @@ class PROXQPSolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example):
+    def solve(self, example,n_average):
         '''
         Solve problem
 
@@ -97,7 +97,7 @@ class PROXQPSolver(object):
         #print("prox_settings._eps_abs : {}".format(prox_settings._eps_abs))
         #print("prox_settings._eps_rel : {}".format(prox_settings._eps_rel))
         run_time = 0
-        n_solving = 10
+        n_solving = n_average
         for i in range(n_solving):
             inria_ldlt_py.QPsolve(
                 model,

@@ -97,7 +97,7 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
     Ax = A.dot(x)
     eps_pri = eps_abs + eps_rel * la.norm(Ax, np.inf)
     pri_res = np.minimum(Ax - l, 0) + np.maximum(Ax - u, 0)
-
+    #print("la.norm(pri_res, np.inf) : {}".format(la.norm(pri_res, np.inf)))
     if la.norm(pri_res, np.inf) > eps_pri:
         print("Error in primal residual: %.4e > %.4e" %
               (la.norm(pri_res, np.inf), eps_pri))
@@ -110,6 +110,8 @@ def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
                                           la.norm(q, np.inf),
                                           la.norm(Aty, np.inf)])
     dua_res = Px + q + Aty
+
+    #print("la.norm(dua_res, np.inf) : {}".format(la.norm(dua_res, np.inf)))
 
     if la.norm(dua_res, np.inf) > eps_dua:
         print("Error in dual residual: %.4e > %.4e" %

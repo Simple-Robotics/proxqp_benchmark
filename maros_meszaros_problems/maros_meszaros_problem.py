@@ -32,7 +32,7 @@ class MarosMeszarosRunner(object):
             f.endswith('.mat')]
         self.problems = [f[:-4] for f in lst_probs]   # List of problem names
 
-    def solve(self, parallel=True, cores=32):
+    def solve(self, parallel=True, cores=32,n_average=0):
         '''
         Solve problems of type example
 
@@ -94,7 +94,7 @@ class MarosMeszarosRunner(object):
 
                             results.append(self.solve_single_example(problem,
                                                                  solver,
-                                                                 settings))
+                                                                 settings,n_average))
                 # Create dataframe
                 df = pd.concat(results)
 
@@ -114,7 +114,7 @@ class MarosMeszarosRunner(object):
 
     def solve_single_example(self,
                              problem,
-                             solver, settings):
+                             solver, settings,n_average):
         '''
         Solve Maros Meszaro 'problem' with 'solver'
 
@@ -132,7 +132,7 @@ class MarosMeszarosRunner(object):
 
         # Solve problem
         s = SOLVER_MAP[solver](settings)
-        results = s.solve(instance)
+        results = s.solve(instance,n_average)
 
         # Create solution as pandas table
         P = instance.qp_problem['P']

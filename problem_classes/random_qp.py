@@ -19,12 +19,12 @@ class RandomQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=1.,
+        P = spa.random(n, n, density=0.15,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc() + 1e-02 * spa.eye(n)
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=1.,
+        self.A = spa.random(m, n, density=0.15,
                             data_rvs=np.random.randn,
                             format='csc')
         v = np.random.randn(n)   # Fictitious solution

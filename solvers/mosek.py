@@ -27,7 +27,7 @@ class MOSEKSolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example):
+    def solve(self, example,n_average):
         '''
         Solve problem
 
