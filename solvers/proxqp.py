@@ -73,7 +73,7 @@ class PROXQPSolver(object):
         results = inria_ldlt_py.QPResults(n,n_eq,n_in)
         prox_settings = inria_ldlt_py.QPSettings()
         work = inria_ldlt_py.QPWorkspace(n,n_eq,n_in)
-        #prox_settings.max_iter = 1000
+        prox_settings.max_iter = 1000000
         #prox_settings.max_iter_in = 1500
 
         inria_ldlt_py.QPsetup(
