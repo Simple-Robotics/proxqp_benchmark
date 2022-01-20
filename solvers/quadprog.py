@@ -8,6 +8,10 @@ from typing import Optional
 from warnings import warn
 from numpy import hstack,vstack, ndarray
 import time
+import eigenpy
+import scipy
+
+import numpy.linalg as la
 
 class QUADPROGSolver(object):
 
@@ -36,7 +40,7 @@ class QUADPROGSolver(object):
         return self._settings
 
 
-    def solve(self, example):
+    def solve(self, example,n_average):
         """
         Solve a Quadratic Program defined as:
         .. math::
@@ -107,6 +111,8 @@ class QUADPROGSolver(object):
         ub = problem['u']
         lb = problem['l']
 
+        
+
         eq_ids = lb == ub
         in_ids = lb != ub
         
@@ -122,11 +128,11 @@ class QUADPROGSolver(object):
         qp_b: Optional[ndarray] = None
         if A is not None and b is not None:
             if C is not None and u is not None:
-                qp_C = -vstack([-A,C, -C]).T
-                qp_b = -hstack([-b, u, -l])
+                qp_C = -vstack([A,C, -C]).T
+                qp_b = -hstack([b, u, -l])
             else:
-                qp_C = -A.T
-                qp_b = -b
+                qp_C = A.T
+                qp_b = b
             meq = A.shape[0]
         else:  # no equality constraint
             if C is not None and u is not None:
@@ -134,13 +140,34 @@ class QUADPROGSolver(object):
                 qp_b = -hstack([u, -l])
             meq = 0
         try:
-            print("H shape : {} ; g : {} ; A : {} ; u : {} ; eq : {}".format(problem['P'].shape,problem['q'].shape,problem['A'].shape,problem['u'].shape,A.shape[0]))
-            print("qp_G shape : {} ; qp_a : {} ; qp_C : {} ; qp_b : {} ; meq : {}".format(qp_G.shape,qp_a.shape,qp_C.shape,qp_b.shape,meq))
+            #qp_G = scipy.linalg.inv(eigenpy.LLT(H).matrixL())
+            qp_G = scipy.linalg.inv(scipy.linalg.cholesky(H))
+            
+            #np.save("qp_G_fact.npy",qp_G)
+            #np.save("qp_a.npy",qp_a)
+            #np.save("qp_C.npy",qp_C)
+            #np.save("qp_b.npy",qp_b)
+            #print("m : {}".format(meq))
+
+
+            factorize = True
             tic = time.time()
-            x, objval, xu, niter, y, iact = solve_qp(qp_G, qp_a, qp_C, qp_b, meq)
+            x, objval, xu, niter, y, iact = solve_qp(qp_G, qp_a, qp_C, qp_b, meq, factorize )
             toc = time.time()
             run_time = toc - tic
-            if not is_qp_solution_optimal(problem, x, y,
+            n_in = sum(in_ids)
+            y_sol = np.zeros(meq+n_in)
+            #print(" dual residual : {}".format(np.linalg.norm(qp_G.dot(x)-qp_a-qp_C.dot(y),np.inf)))
+            #print("n_in : {} ; meq : {}".format(n_in,meq))
+            if (meq>0 and n_in==0):
+                y_sol = -y
+            if (meq>0 and n_in>0):
+                y_sol[eq_ids] = y[:meq]
+                y_sol[in_ids] = (-y[meq+n_in:meq+2*n_in] + y[meq:meq+n_in])
+            if (meq==0 and n_in>0):
+                y_sol[in_ids] = -y[meq+n_in:meq+2*n_in] + y[meq:meq+n_in]
+
+            if not is_qp_solution_optimal(problem, x, y_sol,
                                             high_accuracy=self._settings.get('high_accuracy')):
                 status = s.SOLVER_ERROR
             # Verify solver time
@@ -154,7 +181,7 @@ class QUADPROGSolver(object):
                     if run_time > self._settings['time_limit']:
                         status = s.TIME_LIMIT
 
-            return Results(status, objval, x, y,
+            return Results(status, objval, x, -y,
                             run_time, niter)
 
 

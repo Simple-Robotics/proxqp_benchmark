@@ -3,9 +3,9 @@ import scipy.sparse as spa
 import cvxpy
 
 
-class RandomQPExample(object):
+class RandomDegenerateQPExample(object):
     '''
-    Random QP example
+    Random Degenerate QP example
     '''
     def __init__(self, n, seed=1):
         '''
@@ -14,30 +14,47 @@ class RandomQPExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        m = int(n / 2)
+        n_in = int(n/3)
+        m = 2 * n_in
+        
 
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=1,
+        P = spa.random(n, n, density=0.15,
                        data_rvs=np.random.randn,
                        format='csc')
-        self.P = P.dot(P.T).tocsc() + 1e-02 * spa.eye(n)
+        self.P = P.dot(P.T).tocsc() + 1e-10 * spa.eye(n)
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=1,
+        C = spa.random(n_in, n, density=0.15,
                             data_rvs=np.random.randn,
                             format='csc')
+        # make sure the matrix rank deficient
+        U,s,Vt = np.linalg.svd(C.toarray())
+        #s[-int(n_in/2):] = 0
+        s[-1] = 0
+        C_r = U @ np.diag(s) @ Vt[:n_in,:]
+        #print("np.allclose(C, C_r) : {} ".format(np.allclose(C.toarray(), C_r)))
+        C = spa.csc_matrix(C_r)
+        self.A = spa.csc_matrix(np.vstack([C.toarray(),C.toarray()]))
+
+        print("numpy.linalg.matrix_rank(A.toarray()) : {} ; m : {} ".format(np.linalg.matrix_rank(self.A.toarray()),m))
+        print("A : {}".format(self.A.toarray()))
         v = np.random.randn(n)   # Fictitious solution
-        delta = np.random.rand(m)  # To get inequality
-        self.u = self.A@v + delta
-        self.l = - np.inf * np.ones(m)  # self.u - np.random.rand(m)
+        #delta = np.random.rand(m)  # To get inequality
+        self.u = self.A@v
+        self.u[-1] = 0
+        #self.u += delta
+        #self.l = (- np.inf * np.ones(m)) # self.u - np.random.rand(m)
+        self.l = self.u
+        #self.u += delta
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()
 
     @staticmethod
     def name():
-        return 'Random QP'
+        return 'Random Degenerate QP'
 
     def _generate_qp_problem(self):
         '''

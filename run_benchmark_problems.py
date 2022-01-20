@@ -24,7 +24,7 @@ import inria_ldlt_py
 parser = argparse.ArgumentParser(description='Benchmark Problems Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=True,
+parser.add_argument('--verbose', help='Verbose solvers', default=False,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -40,8 +40,8 @@ print('parallel', parallel)
 # Add high accuracy solvers when accuracy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers =  [s.quadprog] # [s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES] # qpalm crashes as well (segfault..)  ,
-    OUTPUT_FOLDER = 'benchmark_problems_high_accuracy'
+    solvers = [s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  ,
+    OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
 else:
@@ -60,7 +60,9 @@ n_average = 10
 
 # Run benchmark problems
 problems = [
-            'Random QP'
+            #'Random QP'
+            #'Random Degenerate QP'
+            'Random Not Strongly Convex QP'
             #'Random Mixed QP'
             #'Eq QP'
             #'Portfolio',
@@ -72,6 +74,8 @@ problems = [
 
 problem_dimensions = {'Random QP': gen_int_log_space(10, 1000, n_dim), # 2000 à la base
                       'Random Mixed QP': gen_int_log_space(10, 1000, n_dim),
+                      'Random Degenerate QP': gen_int_log_space(10, 1000, n_dim),
+                      'Random Not Strongly Convex QP': gen_int_log_space(10, 1000, n_dim),
                       'Eq QP': gen_int_log_space(10, 1000, n_dim),
                       'Portfolio': gen_int_log_space(5, 150, n_dim),
                       'Lasso': gen_int_log_space(10, 200, n_dim),
@@ -83,6 +87,8 @@ problem_dimensions = {'Random QP': gen_int_log_space(10, 1000, n_dim), # 2000 à
 # serially
 problem_parallel = {'Random QP': parallel,
                     'Random Mixed QP': parallel,
+                    'Random Degenerate QP': parallel,
+                    'Random Not Strongly Convex QP': parallel,
                     'Eq QP': parallel,
                     'Portfolio': parallel,
                     'Lasso': parallel,
@@ -98,30 +104,29 @@ problem_parallel = {'Random QP': parallel,
 
 for problem in problems:
     example = Example(problem,
-                      #problem_dimensions[problem],
-                      [10],
+                      problem_dimensions[problem],
+                      #[10],
                       solvers,
                       s.settings,
                       OUTPUT_FOLDER,
-                      1,
-                      1
-                      #n_instances,
-                      #n_average
+                      n_instances,
+                      #2,
+                      n_average
                       )
     example.solve(parallel=problem_parallel[problem])
 
 # Compute results statistics
 '''
-
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    problems=problems,
                    high_accuracy=high_accuracy)
 
 plot_performance_profiles(problems, solvers)
 
+
 # plots 
 
-problems_type = 'Random Mixed QP'
+problems_type = 'Random Not Strongly Convex QP'
 suffix = ''
 #_m=0.5n_density1
 compute_time_series_plot(solvers, problems_type, suffix)
