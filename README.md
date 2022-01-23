@@ -5,8 +5,8 @@ These are the scripts to compare the following Quadratic Program (QP) solvers
 -   OSQP
 -   GUROBI
 -   MOSEK
--   ECOS (through CVXPY)
 -   qpOASES
+-   quadprog
 
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
 To run these scripts you need `pandas` and `cvxpy` installed.
@@ -15,21 +15,18 @@ All the scripts (apart from the parametric examples) come with options (default 
 
 - `--parallel` for parallel execution across instances
 - `--verbose` for verbose solvers output (they  can be slower than necessary while printing)
-- `--high_accuracy` for high accuracy `eps=1e-05` solver settings + optimality checks (default is `eps=1e-03`)
+- `--high_accuracy` for high accuracy `eps=1e-09` solver settings + optimality checks
 
 
 ## Benchmark problems
 The problems are all randomly generated as described in the OSQP paper.
-They produce a benchmark library of `1400` problems with nonzeros ranging from `100` to `10'000'000`.
 Problem instances include
 
 -   Random QP
 -   Equality constrained QP
--   Portfolio
--   Lasso
--   Huber fitting
--   Support vector machines (SVM)
--   Constrained optimal control
+-   Random Mixed QP
+-   Random Degenerate QP
+-   Random Not Strictly Convex QP
 
 We generate the problems using the scripts in the `problem_classes` folder.
 
@@ -41,9 +38,9 @@ python run_benchmark_problems.py
 ### Results
 The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
 
-| OSQP | GUROBI            | MOSEK           | ECOS               | qpOASES            |
+| OSQP | GUROBI            | MOSEK           | quadprog           | qpOASES            |
 | ---- | ----------------- | --------------- | ------------------ | ------------------ |
-| 1.0  | 4.28              | 2.52            | 28.85              | 149.93             |
+|  |              |            |               |             |
 
 
 ## Maros Meszaros problems
@@ -60,36 +57,7 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 
 | OSQP               | GUROBI | MOSEK             |
 | ------------------ | ------ | ----------------- |
-| 1.46               | 1.0    | 6.12              |
-
-
-## SuiteSparse Matrix Lasso and Huber Fitting problems
-These are Lasso and Huber fitting problems generated from Least-Squares linear systems `Ax ~ b` from the [SuiteSparse Matrix Collection](https://sparse.tamu.edu/). They are downloaded and converted to mat using the [download.jl](./problem_classes/suitesparse_matrix_collection/download.jl) script. They are a total of 60 problems (30 Lasso and 30 Huber fitting).
-
-To execute these tests run
-```python
-python run_suitesparse_problems.py
-```
-
-### Results
-The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
-
-| OSQP | GUROBI             | MOSEK              |
-| ---- | ------------------ | ------------------ |
-| 1.0  | 1.63               | 1.74               |
-
-## Parametric problems
-These tests apply only to the OSQP solver with and without warm-starting for three parametric examples of
--   Portfolio
--   Lasso
--   Constrained optimal control (MPC)
-
-The problem construction is the same as for the same categories in the **Benchmark Problems**.
-
-To execute these tests run
-```python
-python run_parametric_problems.py
-```
+|                |     |               |
 
 ## Citing
 
