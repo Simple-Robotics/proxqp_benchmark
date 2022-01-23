@@ -5,18 +5,10 @@ import pandas as pd
 
 from solvers.solvers import SOLVER_MAP
 from problem_classes.random_qp import RandomQPExample
-
 from problem_classes.random_mixed_qp import RandomMixedQPExample
-
 from problem_classes.random_degenerate_qp import RandomDegenerateQPExample
 from problem_classes.random_not_strongly_convex_qp import RandomNotStronglyConvexQPExample
-
 from problem_classes.eq_qp import EqQPExample
-from problem_classes.portfolio import PortfolioExample
-from problem_classes.lasso import LassoExample
-from problem_classes.svm import SVMExample
-from problem_classes.huber import HuberExample
-from problem_classes.control import ControlExample
 from utils.general import make_sure_path_exists
 
 
@@ -26,12 +18,9 @@ examples = [
             RandomDegenerateQPExample,
             RandomNotStronglyConvexQPExample,
             RandomQPExample,
-            EqQPExample,
-            PortfolioExample,
-            LassoExample,
-            SVMExample,
-            HuberExample,
-            ControlExample]
+            EqQPExample
+            ]
+
 
 EXAMPLES_MAP = {example.name(): example for example in examples}
 
