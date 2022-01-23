@@ -12,6 +12,7 @@ class EqQPExample(object):
         Generate problem in QP format and CVXPY format
         '''
         # Set random seed
+        seed=2
         np.random.seed(seed)
 
         m = int(n/2)

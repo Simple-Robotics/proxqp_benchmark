@@ -14,10 +14,10 @@ class RandomMixedQPExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        m = 2 * int(n/3)
+        m = 2 * int(n/4)
 
-        n_eq = int(n/3)
-        n_in = int(n/3)
+        n_eq = int(n/4)
+        n_in = int(n/4)
 
         # Generate problem data
         self.n = int(n)
@@ -33,7 +33,8 @@ class RandomMixedQPExample(object):
         v = np.random.randn(n)   # Fictitious solution
         delta = np.random.rand(m)  # To get inequality
         self.u = self.A@v
-        self.l = (- np.inf * np.ones(m)) # self.u - np.random.rand(m)
+        #self.l = (- np.inf * np.ones(m)) # self.u - np.random.rand(m)
+        self.l = self.u - np.random.rand(m)
 
         self.u[n_in:] += delta[n_in:]
         self.l[:n_eq] = self.u[:n_eq]

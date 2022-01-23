@@ -39,7 +39,7 @@ class RandomNotStronglyConvexQPExample(object):
         self.l = sol # must be a box otherwise the problem will be dually infeasible (as one can find a feasible direction s.t Px = 0 and qTx <0)
 
         self.u += delta
-        self.l -= delta
+        self.l -= np.random.rand(m)
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()

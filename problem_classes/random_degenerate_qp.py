@@ -14,7 +14,7 @@ class RandomDegenerateQPExample(object):
         # Set random seed
         np.random.seed(seed)
 
-        n_in = int(n/3)
+        n_in = int(n/4)
         m = 2 * n_in
         
 
@@ -25,29 +25,32 @@ class RandomDegenerateQPExample(object):
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc() + 1e-10 * spa.eye(n)
-        self.q = np.random.randn(n)
+        #self.q = np.random.randn(n)
         C = spa.random(n_in, n, density=0.15,
                             data_rvs=np.random.randn,
                             format='csc')
         # make sure the matrix rank deficient
-        U,s,Vt = np.linalg.svd(C.toarray())
+        #U,s,Vt = np.linalg.svd(C.toarray())
         #s[-int(n_in/2):] = 0
-        s[-1] = 0
-        C_r = U @ np.diag(s) @ Vt[:n_in,:]
+        #s[-1] = 0 
+        #C_r = U @ np.diag(s) @ Vt[:n_in,:]
         #print("np.allclose(C, C_r) : {} ".format(np.allclose(C.toarray(), C_r)))
-        C = spa.csc_matrix(C_r)
+        #C = spa.csc_matrix(C_r)
         self.A = spa.csc_matrix(np.vstack([C.toarray(),C.toarray()]))
 
         print("numpy.linalg.matrix_rank(A.toarray()) : {} ; m : {} ".format(np.linalg.matrix_rank(self.A.toarray()),m))
         print("A : {}".format(self.A.toarray()))
         v = np.random.randn(n)   # Fictitious solution
-        #delta = np.random.rand(m)  # To get inequality
-        self.u = self.A@v
-        self.u[-1] = 0
-        #self.u += delta
-        #self.l = (- np.inf * np.ones(m)) # self.u - np.random.rand(m)
+        delta = np.random.rand(m)  # To get inequality
+
+        sol_dual = np.random.randn(m)
+        sol = self.A@v
+
+        self.q = - (self.P @ v + self.A.T @ sol_dual)
+        self.u = sol
         self.l = self.u
-        #self.u += delta
+        self.u += delta
+        self.l -= np.random.rand(m)
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()
