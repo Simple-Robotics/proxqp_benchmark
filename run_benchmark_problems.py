@@ -40,7 +40,7 @@ print('parallel', parallel)
 # Add high accuracy solvers when accuracy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers = [s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  ,
+    solvers =  [s.GUROBI_high,s.MOSEK_high,s.quadprog]#[s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
     OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -60,28 +60,19 @@ n_average = 10
 
 # Run benchmark problems
 problems = [
-            #'Random QP'
+            'Random QP'
             #'Random Degenerate QP'
-            'Random Not Strongly Convex QP'
+            #'Random Not Strongly Convex QP'
             #'Random Mixed QP'
             #'Eq QP'
-            #'Portfolio',
-            #'Lasso',
-            #'SVM',
-            #'Huber',
-            #'Control'
             ]
 
-problem_dimensions = {'Random QP': gen_int_log_space(10, 1000, n_dim), # 2000 à la base
+problem_dimensions = {'Random QP': gen_int_log_space(10, 1000, n_dim),
                       'Random Mixed QP': gen_int_log_space(10, 1000, n_dim),
                       'Random Degenerate QP': gen_int_log_space(10, 1000, n_dim),
                       'Random Not Strongly Convex QP': gen_int_log_space(10, 1000, n_dim),
-                      'Eq QP': gen_int_log_space(10, 1000, n_dim),
-                      'Portfolio': gen_int_log_space(5, 150, n_dim),
-                      'Lasso': gen_int_log_space(10, 200, n_dim),
-                      'SVM': gen_int_log_space(10, 200, n_dim),
-                      'Huber': gen_int_log_space(10, 200, n_dim),
-                      'Control': gen_int_log_space(10, 100, n_dim)}
+                      'Eq QP': gen_int_log_space(10, 1000, n_dim)
+                      }
 
 # Some problems become too big to be executed in parallel and we solve them
 # serially
@@ -89,16 +80,8 @@ problem_parallel = {'Random QP': parallel,
                     'Random Mixed QP': parallel,
                     'Random Degenerate QP': parallel,
                     'Random Not Strongly Convex QP': parallel,
-                    'Eq QP': parallel,
-                    'Portfolio': parallel,
-                    'Lasso': parallel,
-                    'SVM': parallel,
-                    'Huber': parallel,
-                    'Control': parallel}
-
-# Small dimensions (to comment when running on the server)
-#  for key in problem_dimensions:
-   #  problem_dimensions[key] = [4, 5]
+                    'Eq QP': parallel
+                    }
 
 # Run all examples
 
@@ -110,7 +93,8 @@ for problem in problems:
                       s.settings,
                       OUTPUT_FOLDER,
                       n_instances,
-                      #2,
+                      #1,
+                      #0
                       n_average
                       )
     example.solve(parallel=problem_parallel[problem])
@@ -126,7 +110,7 @@ plot_performance_profiles(problems, solvers)
 
 # plots 
 
-problems_type = 'Random Not Strongly Convex QP'
+problems_type = 'Random_Mixed_QP'
 suffix = ''
 #_m=0.5n_density1
 compute_time_series_plot(solvers, problems_type, suffix)
