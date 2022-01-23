@@ -120,6 +120,7 @@ class Example(object):
                                 # there is no reset function to reset the workspace while keeping it in memory
                                 run_time = 0
                                 n_solving = n_average
+                                #n_solving = 0
                                 for i in range(n_solving):
                                     res = self.solve_single_example(n,
                                                           instance,

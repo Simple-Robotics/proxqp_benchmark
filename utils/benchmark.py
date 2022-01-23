@@ -182,7 +182,7 @@ def compute_time_series_plot(solvers, problems_type, suffix):
         plt.errorbar(N[solver], t[solver],yerr = y_error, label=solver,fmt ='o')
     #plt.xlim(1., 100000.)
     #plt.ylim(0., 1.)
-    plt.xlabel('n')
+    plt.xlabel('d')
     plt.ylabel('Timings (s)')
     plt.xscale('log')
     plt.yscale('log')
