@@ -2,6 +2,7 @@
 
 These are the scripts to compare the following Quadratic Program (QP) solvers
 
+-   PROXQP
 -   OSQP
 -   GUROBI
 -   MOSEK
@@ -9,9 +10,9 @@ These are the scripts to compare the following Quadratic Program (QP) solvers
 -   quadprog
 
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
-To run these scripts you need `pandas` and `cvxpy` installed.
+To run these scripts you need `pandas`, `cvxpy`, ` installed.
 
-All the scripts (apart from the parametric examples) come with options (default to `False`)
+All the scripts come with options (default to `False`)
 
 - `--parallel` for parallel execution across instances
 - `--verbose` for verbose solvers output (they  can be slower than necessary while printing)
@@ -38,9 +39,9 @@ python run_benchmark_problems.py
 ### Results
 The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
 
-| OSQP | GUROBI            | MOSEK           | quadprog           | qpOASES            |
-| ---- | ----------------- | --------------- | ------------------ | ------------------ |
-|  |              |            |               |             |
+| PROXQP | OSQP              | GUROBI          | MOSEK              | qpOASES            |
+| -----  | ----------------- | --------------- | ------------------ | ------------------ |
+|        |                   |                 |                    |                    |
 
 
 ## Maros Meszaros problems
@@ -55,9 +56,9 @@ python run_maros_meszaros_problems.py
 ### Results
 The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
 
-| OSQP               | GUROBI | MOSEK             |
+| PROXQP             | OSQP   | GUROBI            |
 | ------------------ | ------ | ----------------- |
-|                |     |               |
+|                    |        |                   |
 
 ## Citing
 
