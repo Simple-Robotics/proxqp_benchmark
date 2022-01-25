@@ -10,7 +10,7 @@ These are the scripts to compare the following Quadratic Program (QP) solvers
 -   quadprog
 
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
-To run these scripts you need `pandas`, `cvxpy`, ` installed.
+To run these scripts you need `pandas`, `cvxpy` (and solvers `quadprog`, `gurobi`, `mosek`, `qpOASES`, `OSQP`) installed.
 
 All the scripts come with options (default to `False`)
 
@@ -20,14 +20,14 @@ All the scripts come with options (default to `False`)
 
 
 ## Benchmark problems
-The problems are all randomly generated as described in the OSQP paper.
+The problems are all randomly generated as described in the PROXQP paper.
 Problem instances include
 
--   Random QP
--   Equality constrained QP
--   Random Mixed QP
--   Random Degenerate QP
--   Random Not Strictly Convex QP
+-   Pure Inequality constrained QP
+-   Pure Equality constrained QP
+-   Inequality and Equality Constrained QP
+-   Pure Inequality Degenerate QP
+-   Pure Inequality QP without strictly convex Hessian matrix
 
 We generate the problems using the scripts in the `problem_classes` folder.
 
