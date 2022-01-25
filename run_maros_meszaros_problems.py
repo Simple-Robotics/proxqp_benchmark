@@ -1,11 +1,12 @@
 '''
-Run Maros-Meszaros problems for the OSQP paper
+Run Maros-Meszaros problems for the PROXQP paper
 
 This code tests the solvers:
+    - PROXQP
     - OSQP
     - GUROBI
     - MOSEK
-
+    - qpOASES
 '''
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
 import solvers.solvers as s
@@ -17,7 +18,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Maros Meszaros Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=True,
+parser.add_argument('--verbose', help='Verbose solvers', default=False,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -34,10 +35,11 @@ print('parallel', parallel)
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
     #solvers = [s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high]
-    solvers = [ s.PROXQP]
+    solvers = [ s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high, s.qpOASES]
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
+        #s.settings[key]['eps_abs'] = 1.e-6
 else:
     solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
     OUTPUT_FOLDER = 'maros_meszaros_problems'
@@ -52,11 +54,10 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
                                             s.settings,
                                             OUTPUT_FOLDER)
 
-# DEBUG only: Choose only 2 problems
-# maros_meszaros_runner.problems = ["STADAT1", "BOYD1"]
-
 maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=0)
 
 # Compute results statistics
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    high_accuracy=high_accuracy)
+
+plot_performance_profiles(OUTPUT_FOLDER, solvers , '')

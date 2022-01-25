@@ -1,16 +1,13 @@
 '''
-Run all benchmarks for the OSQP paper
+Run all benchmarks for the PROXQP paper
 
 This code tests the solvers:
+    - PROXQP
     - OSQP
     - GUROBI
     - MOSEK
-    - ECOS (crash always..)
     - qpOASES
     - quadprog
-
-
-    - QPALM (error to fix)
 
 '''
 from benchmark_problems.example import Example
@@ -40,7 +37,7 @@ print('parallel', parallel)
 # Add high accuracy solvers when accuracy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers =  [s.GUROBI_high,s.MOSEK_high,s.quadprog]#[s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
+    solvers =  [s.OSQP_high,s.PROXQP]#[s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
     OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -56,15 +53,16 @@ if verbose:
 n_instances = 5 # 10 à la base #1 
 n_dim = 10 # 20 à la base
 n_average = 10
+sparsity = 0.15
 
 
 # Run benchmark problems
 problems = [
-            'Random QP'
+            #'Random QP'
             #'Random Degenerate QP'
             #'Random Not Strongly Convex QP'
             #'Random Mixed QP'
-            #'Eq QP'
+            'Eq QP'
             ]
 
 problem_dimensions = {'Random QP': gen_int_log_space(10, 1000, n_dim),
@@ -88,30 +86,23 @@ problem_parallel = {'Random QP': parallel,
 for problem in problems:
     example = Example(problem,
                       problem_dimensions[problem],
-                      #[10],
                       solvers,
                       s.settings,
                       OUTPUT_FOLDER,
                       n_instances,
-                      #1,
-                      #0
-                      n_average
+                      n_average,
+                      sparsity
                       )
     example.solve(parallel=problem_parallel[problem])
 
 # Compute results statistics
-'''
+
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    problems=problems,
                    high_accuracy=high_accuracy)
 
-plot_performance_profiles(problems, solvers)
-
-
 # plots 
 
-problems_type = 'Random_Mixed_QP'
-suffix = ''
-#_m=0.5n_density1
-compute_time_series_plot(solvers, problems_type, suffix)
-'''
+suffix = '_sparsity_' + sparsity + '_high_accuracy'
+for problem in problems:
+    compute_time_series_plot(solvers, problem, suffix)

@@ -7,7 +7,7 @@ class RandomNotStronglyConvexQPExample(object):
     '''
     Random Mixed QP example
     '''
-    def __init__(self, n, seed=1):
+    def __init__(self, n, sparsity,seed=1):
         '''
         Generate problem in QP format and CVXPY format
         '''
@@ -19,12 +19,12 @@ class RandomNotStronglyConvexQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=0.15,
+        P = spa.random(n, n, density=sparsity,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc()
         
-        self.A = spa.random(m, n, density=0.15,
+        self.A = spa.random(m, n, density=sparsity,
                             data_rvs=np.random.randn,
                             format='csc')
         v = np.random.randn(n)   # Fictitious solution

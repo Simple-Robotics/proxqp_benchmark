@@ -12,7 +12,7 @@ from matplotlib.ticker import MultipleLocator
 
 MAX_TIMING = time_limit
 
-def plot_performance_profiles(problems, solvers):
+def plot_performance_profiles(problems, solvers,problem_name):
     """
     Plot performance profiles in matplotlib for specified problems and solvers
     """
@@ -22,8 +22,10 @@ def plot_performance_profiles(problems, solvers):
         if "polish" in s:
             solvers.remove(s)
 
-    #df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
-    df = pd.read_csv('./results/benchmark_problems_high_accuracy/performance_profiles.csv' % problems)
+    df = pd.read_csv('./results/%s/performance_profiles.csv' % problems)
+    #df = pd.read_csv('./results/benchmark_problems_high_accuracy/performance_profiles.csv' % problems)
+    #df = pd.read_csv('./results/maros_meszaros_problems_high_accuracy/performance_profiles.csv' )
+    
     plt.figure(0)
     for solver in solvers:
         plt.plot(df["tau"], df[solver], label=solver)
@@ -36,7 +38,7 @@ def plot_performance_profiles(problems, solvers):
     plt.grid()
     plt.show(block=False)
     #results_file = './results/%s/%s.png' % (problems, problems)
-    results_file = './results/benchmark_problems_high_accuracy/%s.png' % problems
+    results_file = './results/%s/%s.pdf' % (problems , "performance_profile_"+problems+ '_' + problem_name)
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
 
@@ -198,10 +200,10 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     plt.tick_params(axis='y', which='minor')
     ax.minorticks_on()
     ax.grid( which='major', color='b', linestyle='-',axis="y")
-    ax.grid( which='minor', color='r', linestyle='--',axis="y")
+    ax.grid( which='minor', color='grey', linestyle='--',axis="y")
     plt.show(block=False)
     #results_file = './results/%s/%s.png' % (problems, problems)
-    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + suffix + ".png"
+    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + suffix + ".pdf"
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
 
@@ -454,5 +456,7 @@ def compute_stats_info(solvers, benchmark_type,
         compute_rho_updates(benchmark_type, high_accuracy=high_accuracy)
 
     # Plot performance profiles
-    if performance_profiles and False:
-        plot_performance_profiles(benchmark_type, solvers)
+    if performance_profiles :
+        if problems is not None:
+            for problem in problems:
+                plot_performance_profiles(benchmark_type, solvers,problem)

@@ -4,6 +4,14 @@ from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
 import math 
+import scipy
+import numpy
+
+def normInf(x):
+  if x.shape[0] == 0:
+    return 0.
+  else:
+    return np.linalg.norm(x,np.inf)
 
 
 class PROXQPSolver(object):
@@ -56,7 +64,7 @@ class PROXQPSolver(object):
 
         ub[PlusInfId] = 1.e20
         lb[NegInfId] = -1.e20
-        
+
         H = problem['P']
         g = problem['q']
         A = problem['A'][eq_ids,:]
@@ -73,15 +81,20 @@ class PROXQPSolver(object):
         results = inria_ldlt_py.QPResults(n,n_eq,n_in)
         prox_settings = inria_ldlt_py.QPSettings()
         work = inria_ldlt_py.QPWorkspace(n,n_eq,n_in)
-        prox_settings.max_iter = 1000000
-        #prox_settings.max_iter_in = 1500
+        #prox_settings.max_iter =
+        #prox_settings.eps_IG =
+        #prox_settings.max_iter_in = 
+
 
         inria_ldlt_py.QPsetup(
-                np.asfortranarray(H.toarray()),
+                #np.asfortranarray(H.toarray()),
+                H,
                 np.asfortranarray(g),
-                np.asfortranarray(A.toarray()),
+                #np.asfortranarray(A.toarray()),
+                A,
                 np.asfortranarray(b),
-                np.asfortranarray(C.toarray()),
+                #np.asfortranarray(C.toarray()),
+                C,
                 np.asfortranarray(u),
                 np.asfortranarray(l),
                 prox_settings,
@@ -94,8 +107,6 @@ class PROXQPSolver(object):
                 self._settings['verbose']  
         )
 
-        #print("prox_settings._eps_abs : {}".format(prox_settings._eps_abs))
-        #print("prox_settings._eps_rel : {}".format(prox_settings._eps_rel))
         run_time = 0
         n_solving = n_average
         for i in range(n_solving):
@@ -120,7 +131,6 @@ class PROXQPSolver(object):
         n_solving += 1
     
         # duration time
-        #run_time = results.timing * 1.e-6 # the run_time is measured in microseconds 
         run_time /= (1.e6 * n_solving) # the run_time is measured in microseconds 
 
         # Obj val
@@ -132,6 +142,7 @@ class PROXQPSolver(object):
         # Get solution
         x = results.x 
         y = np.zeros(n_eq+n_in)
+
         y[eq_ids] = results.y
         y[in_ids] = results.z
 

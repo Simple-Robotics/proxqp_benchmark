@@ -111,8 +111,6 @@ class QUADPROGSolver(object):
         ub = problem['u']
         lb = problem['l']
 
-        
-
         eq_ids = lb == ub
         in_ids = lb != ub
         
@@ -131,7 +129,7 @@ class QUADPROGSolver(object):
                 qp_C = -vstack([A,C, -C]).T
                 qp_b = -hstack([b, u, -l])
             else:
-                qp_C = A.T
+                qp_C = A.T # Not working --> dual always false
                 qp_b = b
             meq = A.shape[0]
         else:  # no equality constraint
@@ -157,8 +155,10 @@ class QUADPROGSolver(object):
             run_time = toc - tic
             n_in = sum(in_ids)
             y_sol = np.zeros(meq+n_in)
-            #print(" dual residual : {}".format(np.linalg.norm(qp_G.dot(x)-qp_a-qp_C.dot(y),np.inf)))
+            #print(" dual residual with -y : {}".format(np.linalg.norm(H.dot(x)-qp_a+qp_C.dot(-y),np.inf)))
+            #print(" dual residual with +y: {}".format(np.linalg.norm(H.dot(x)-qp_a+qp_C.dot(+y),np.inf)))
             #print("n_in : {} ; meq : {}".format(n_in,meq))
+            #print("y : {}".format(y))
             if (meq>0 and n_in==0):
                 y_sol = -y
             if (meq>0 and n_in>0):
@@ -181,7 +181,7 @@ class QUADPROGSolver(object):
                     if run_time > self._settings['time_limit']:
                         status = s.TIME_LIMIT
 
-            return Results(status, objval, x, -y,
+            return Results(status, objval, x, y_sol,
                             run_time, niter)
 
 
