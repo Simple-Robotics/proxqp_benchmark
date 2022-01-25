@@ -1,4 +1,4 @@
-# Benchmark examples for the OSQP solver
+# Benchmark examples for the PROXQP solver
 
 These are the scripts to compare the following Quadratic Program (QP) solvers
 
