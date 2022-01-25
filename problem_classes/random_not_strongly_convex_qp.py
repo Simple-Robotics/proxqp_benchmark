@@ -23,7 +23,6 @@ class RandomNotStronglyConvexQPExample(object):
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc()
-        print("H : {}".format(self.P.toarray()))
         
         self.A = spa.random(m, n, density=0.15,
                             data_rvs=np.random.randn,
@@ -34,7 +33,7 @@ class RandomNotStronglyConvexQPExample(object):
         sol_dual = np.random.randn(m)
         sol = self.A@v
 
-        self.q = - (self.P @ v + self.A.T @ sol_dual)
+        self.q = - (self.P @ v + self.A.T @ sol_dual) # make sure a solution exists
         self.u = sol
         self.l = sol # must be a box otherwise the problem will be dually infeasible (as one can find a feasible direction s.t Px = 0 and qTx <0)
 

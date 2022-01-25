@@ -33,8 +33,7 @@ class RandomMixedQPExample(object):
         v = np.random.randn(n)   # Fictitious solution
         delta = np.random.rand(m)  # To get inequality
         self.u = self.A@v
-        #self.l = (- np.inf * np.ones(m)) # self.u - np.random.rand(m)
-        self.l = self.u - np.random.rand(m)
+        self.l = (- np.inf * np.ones(m)) 
 
         self.u[n_in:] += delta[n_in:]
         self.l[:n_eq] = self.u[:n_eq]

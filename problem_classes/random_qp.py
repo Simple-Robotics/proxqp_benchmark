@@ -12,6 +12,7 @@ class RandomQPExample(object):
         Generate problem in QP format and CVXPY format
         '''
         # Set random seed
+
         np.random.seed(seed)
 
         m = int(n / 2)
@@ -31,7 +32,7 @@ class RandomQPExample(object):
         delta = np.random.rand(m)  # To get inequality
         sol = self.A@v
         self.u = sol + delta
-        self.l = sol - np.random.rand(m) # - np.inf * np.ones(m) 
+        self.l =  - np.inf * np.ones(m) 
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()
