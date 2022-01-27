@@ -90,7 +90,7 @@ class MarosMeszarosRunner(object):
                         full_name = os.path.join(".", "problem_classes",
                                  PROBLEMS_FOLDER, problem)
                         instance = MarosMeszaros(full_name)
-                        if (instance.qp_problem['P'].nnz <=5000 and instance.qp_problem['A'].nnz <= 5000):
+                        if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000):
 
                             results.append(self.solve_single_example(problem,
                                                                  solver,

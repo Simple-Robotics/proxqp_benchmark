@@ -27,6 +27,7 @@ def plot_performance_profiles(problems, solvers,problem_name):
     #df = pd.read_csv('./results/maros_meszaros_problems_high_accuracy/performance_profiles.csv' )
     
     plt.figure(0)
+    plt.rcParams.update({'font.size': 12})
     for solver in solvers:
         plt.plot(df["tau"], df[solver], label=solver)
     plt.xlim(1., 10000.)
@@ -177,6 +178,7 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     # Compute curve for all solvers
     
     #plt.figure(0)
+    plt.rcParams.update({'font.size': 12})
     fig, ax = plt.subplots()
     for solver in solvers:
         y_error = np.vstack(( np.array(t[solver]) - np.array(err_min[solver]), np.array(err_max[solver]) - np.array(t[solver])  ))
