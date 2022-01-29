@@ -66,7 +66,7 @@ def get_cumulative_data(solvers, problems, output_folder):
         df.to_csv(solver_file_name, index=False)
 
 
-def compute_performance_profiles(solvers, problems_type):
+def compute_performance_profiles(solvers, problems_type, problem_name = ""):
     t = {}
     status = {}
 
@@ -119,7 +119,7 @@ def compute_performance_profiles(solvers, problems_type):
     df_performance_profiles = pd.DataFrame(rho)
     performance_profiles_file = os.path.join('.', 'results',
                                              problems_type,
-                                             'performance_profiles.csv')
+                                             'performance_profiles' + problem_name + '.csv')
     df_performance_profiles.to_csv(performance_profiles_file, index=False)
 
     # Plot performance profiles
@@ -205,7 +205,7 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     ax.grid( which='minor', color='grey', linestyle='--',axis="y")
     plt.show(block=False)
     #results_file = './results/%s/%s.png' % (problems, problems)
-    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + suffix + ".pdf"
+    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + problems_type + suffix + ".pdf"
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
 
@@ -218,7 +218,7 @@ def geom_mean(t, shift=10.):
     return np.exp(np.sum(np.log(np.maximum(1, t + shift))/len(t))) - shift
 
 
-def compute_shifted_geometric_means(solvers, problems_type):
+def compute_shifted_geometric_means(solvers, problems_type,problem_name=""):
     t = {}
     status = {}
     g_mean = {}
@@ -250,6 +250,9 @@ def compute_shifted_geometric_means(solvers, problems_type):
         g_mean[solver] = geom_mean(t[solver])
 
     # Normalize geometric means by best solver
+    #for s in solvers:
+    #    print("s:{};g_mean[s]:{}".format(s,g_mean[s]))
+    #    print("s:{};t[s]:{}".format(s,t[s]))
     best_g_mean = np.min([g_mean[s] for s in solvers])
     for s in solvers:
         g_mean[s] /= best_g_mean
@@ -258,7 +261,7 @@ def compute_shifted_geometric_means(solvers, problems_type):
     df_g_mean = pd.Series(g_mean)
     g_mean_file = os.path.join('.', 'results',
                                problems_type,
-                               'geom_mean.csv')
+                               'geom_mean'+ problem_name + '.csv')
     df_g_mean.to_frame().transpose().to_csv(g_mean_file, index=False)
 
 
@@ -298,7 +301,7 @@ def compute_shifted_geometric_means(solvers, problems_type):
     # df_performance_profiles.to_csv(performance_profiles_file, index=False)
 
 
-def compute_failure_rates(solvers, problems_type):
+def compute_failure_rates(solvers, problems_type,problem_name=""):
     """
     Compute and show failure rates
     """
@@ -311,7 +314,7 @@ def compute_failure_rates(solvers, problems_type):
             solvers.remove(s)
 
     # Check if results file already exists
-    failure_rates_file = os.path.join(".", "results", problems_type, "failure_rates.csv")
+    failure_rates_file = os.path.join(".", "results", problems_type, "failure_rates"+ problem_name + '.csv')
     for solver in solvers:
         results_file = os.path.join('.', 'results', problems_type,
                                     solver, 'results.csv')
@@ -443,13 +446,13 @@ def compute_stats_info(solvers, benchmark_type,
         get_cumulative_data(solvers, problems, benchmark_type)
 
     # Compute failure rates
-    compute_failure_rates(solvers, benchmark_type)
+    #compute_failure_rates(solvers, benchmark_type)
 
     # Compute performance profiles
-    compute_performance_profiles(solvers, benchmark_type)
+    #compute_performance_profiles(solvers, benchmark_type)
 
     # Compute performance profiles
-    compute_shifted_geometric_means(solvers, benchmark_type)
+    #compute_shifted_geometric_means(solvers, benchmark_type)
 
     # Compute polish statistics
     if any(s.startswith('OSQP') for s in solvers) and False:
@@ -461,4 +464,7 @@ def compute_stats_info(solvers, benchmark_type,
     if performance_profiles :
         if problems is not None:
             for problem in problems:
-                plot_performance_profiles(benchmark_type, solvers,problem)
+                #compute_performance_profiles(solvers, benchmark_type,problem)
+                #plot_performance_profiles(benchmark_type, solvers,problem)
+                compute_failure_rates(solvers, benchmark_type,problem)
+                compute_shifted_geometric_means(solvers, benchmark_type,problem)

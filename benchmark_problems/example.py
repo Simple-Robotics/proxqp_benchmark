@@ -35,8 +35,7 @@ class Example(object):
                  settings,
                  output_folder,
                  n_instances=10,
-                 n_average=10,
-                 sparsity=0.15):
+                 n_average=10):
         self.name = name
         self.dims = dims
         self.n_instances = n_instances
@@ -44,7 +43,7 @@ class Example(object):
         self.settings = settings
         self.output_folder = output_folder
 
-    def solve(self, parallel=True,n_average=10,sparsity=0.15):
+    def solve(self, parallel=True,n_average=10):
         '''
         Solve problems of type example
 
@@ -102,7 +101,7 @@ class Example(object):
                                                  zip(repeat(n),
                                                      instances_list,
                                                      repeat(solver),
-                                                     repeat(settings),repeat(sparsity)))
+                                                     repeat(settings)))
                     else:
                         n_results = []
                         for instance in range(self.n_instances):
@@ -116,16 +115,16 @@ class Example(object):
                                                           instance,
                                                           solver,
                                                           settings,
-                                                          n_average,
-                                                          sparsity)
+                                                          n_average
+                                                          )
                                     run_time+=res.run_time
                                     
                                 res = self.solve_single_example(n,
                                                           instance,
                                                           solver,
                                                           settings,
-                                                          n_average,
-                                                          sparsity)
+                                                          n_average
+                                                          )
                                 run_time += res.run_time
                                 n_solving+=1
                                 run_time/= n_solving
@@ -139,8 +138,8 @@ class Example(object):
                                                             instance,
                                                             solver,
                                                             settings,
-                                                            n_average,
-                                                            sparsity)
+                                                            n_average
+                                                            )
                                 )
                                 
                                     
@@ -170,7 +169,7 @@ class Example(object):
 
     def solve_single_example(self,
                              dimension, instance_number,
-                             solver, settings,n_average,sparsity):
+                             solver, settings,n_average):
         '''
         Solve 'example' with 'solver'
 
@@ -184,7 +183,7 @@ class Example(object):
 
         # Create example instance
         example_instance = EXAMPLES_MAP[self.name](dimension,
-                                                   instance_number,sparsity)
+                                                   instance_number)
 
         print(" - Solving %s with n = %i, instance = %i with solver %s" %
               (self.name, dimension, instance_number, solver))

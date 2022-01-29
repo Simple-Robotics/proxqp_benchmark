@@ -7,7 +7,7 @@ class RandomMixedQPExample(object):
     '''
     Random Mixed QP example
     '''
-    def __init__(self, n, sparsity,seed=1):
+    def __init__(self, n,seed=1):
         '''
         Generate problem in QP format and CVXPY format
         '''
@@ -22,12 +22,12 @@ class RandomMixedQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=sparsity,
+        P = spa.random(n, n, density=1.0,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc() + 1e-02 * spa.eye(n)
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=sparsity,
+        self.A = spa.random(m, n, density=1.0,
                             data_rvs=np.random.randn,
                             format='csc')
         v = np.random.randn(n)   # Fictitious solution

@@ -61,8 +61,13 @@ problems = [
             #'Random QP'
             #'Random Degenerate QP'
             #'Random Not Strongly Convex QP'
-            #'Random Mixed QP'
-            'Eq QP'
+            'Random Mixed QP'
+            #'Eq QP'
+            #'Eq QP_m=0.5n_density0.15'
+            #'Random QP_m0.5_density0.15'
+            #'Random_Mixed_QP'
+            #'Random_Degenerate_QP'
+            #'Random Not Strongly Convex QP_density0.15_m=0.5n'
             ]
 
 problem_dimensions = {'Random QP': gen_int_log_space(10, 1000, n_dim),
@@ -90,8 +95,8 @@ for problem in problems:
                       s.settings,
                       OUTPUT_FOLDER,
                       n_instances,
-                      n_average,
-                      sparsity
+                      n_average
+                      
                       )
     example.solve(parallel=problem_parallel[problem])
 
@@ -103,6 +108,8 @@ compute_stats_info(solvers, OUTPUT_FOLDER,
 
 # plots 
 
-suffix = '_sparsity_' + sparsity + '_high_accuracy'
+#suffix = '_sparsity_' + sparsity + '_high_accuracy'
+
+suffix = ''
 for problem in problems:
     compute_time_series_plot(solvers, problem, suffix)

@@ -7,7 +7,7 @@ class RandomDegenerateQPExample(object):
     '''
     Random Degenerate QP example
     '''
-    def __init__(self, n,sparsity, seed=1):
+    def __init__(self, n,seed=1):
         '''
         Generate problem in QP format and CVXPY format
         '''
@@ -21,12 +21,12 @@ class RandomDegenerateQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=sparsity,
+        P = spa.random(n, n, density=0.5,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc() + 1e-2 * spa.eye(n)
         self.q = np.random.randn(n)
-        C = spa.random(n_in, n, density=sparsity,
+        C = spa.random(n_in, n, density=0.5,
                             data_rvs=np.random.randn,
                             format='csc')
         # make sure the matrix rank deficient

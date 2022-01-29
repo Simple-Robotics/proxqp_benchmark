@@ -7,7 +7,7 @@ class RandomNotStronglyConvexQPExample(object):
     '''
     Random Mixed QP example
     '''
-    def __init__(self, n, sparsity,seed=1):
+    def __init__(self, n,seed=1):
         '''
         Generate problem in QP format and CVXPY format
         '''
@@ -19,12 +19,12 @@ class RandomNotStronglyConvexQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=sparsity,
+        P = spa.random(n, n, density=0.5,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc()
         
-        self.A = spa.random(m, n, density=sparsity,
+        self.A = spa.random(m, n, density=0.5,
                             data_rvs=np.random.randn,
                             format='csc')
         v = np.random.randn(n)   # Fictitious solution
@@ -38,7 +38,7 @@ class RandomNotStronglyConvexQPExample(object):
         self.l = sol # must be a box otherwise the problem will be dually infeasible (as one can find a feasible direction s.t Px = 0 and qTx <0)
 
         self.u += delta
-        self.l -= np.random.rand(m)
+        self.l -= delta
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()
