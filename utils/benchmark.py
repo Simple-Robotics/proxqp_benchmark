@@ -203,6 +203,7 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     ax.minorticks_on()
     ax.grid( which='major', color='b', linestyle='-',axis="y")
     ax.grid( which='minor', color='grey', linestyle='--',axis="y")
+
     plt.show(block=False)
     #results_file = './results/%s/%s.png' % (problems, problems)
     results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + problems_type + suffix + ".pdf"
@@ -315,6 +316,7 @@ def compute_failure_rates(solvers, problems_type,problem_name=""):
 
     # Check if results file already exists
     failure_rates_file = os.path.join(".", "results", problems_type, "failure_rates"+ problem_name + '.csv')
+    print("problems_type : {} ; problem_name : {}".format(problems_type,problem_name))
     for solver in solvers:
         results_file = os.path.join('.', 'results', problems_type,
                                     solver, 'results.csv')
@@ -446,13 +448,13 @@ def compute_stats_info(solvers, benchmark_type,
         get_cumulative_data(solvers, problems, benchmark_type)
 
     # Compute failure rates
-    #compute_failure_rates(solvers, benchmark_type)
+    compute_failure_rates(solvers, benchmark_type)
 
     # Compute performance profiles
     #compute_performance_profiles(solvers, benchmark_type)
 
     # Compute performance profiles
-    #compute_shifted_geometric_means(solvers, benchmark_type)
+    compute_shifted_geometric_means(solvers, benchmark_type)
 
     # Compute polish statistics
     if any(s.startswith('OSQP') for s in solvers) and False:
@@ -461,10 +463,12 @@ def compute_stats_info(solvers, benchmark_type,
         compute_rho_updates(benchmark_type, high_accuracy=high_accuracy)
 
     # Plot performance profiles
+    '''
     if performance_profiles :
         if problems is not None:
             for problem in problems:
-                #compute_performance_profiles(solvers, benchmark_type,problem)
-                #plot_performance_profiles(benchmark_type, solvers,problem)
-                compute_failure_rates(solvers, benchmark_type,problem)
-                compute_shifted_geometric_means(solvers, benchmark_type,problem)
+                compute_performance_profiles(solvers, benchmark_type,problem)
+                plot_performance_profiles(benchmark_type, solvers,problem)
+                #compute_failure_rates(solvers, benchmark_type, problem)
+                #compute_shifted_geometric_means(solvers, benchmark_type, problem)
+    '''

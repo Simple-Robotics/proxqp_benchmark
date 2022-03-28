@@ -37,7 +37,7 @@ print('parallel', parallel)
 # Add high accuracy solvers when accuracy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers =  [s.OSQP_high,s.PROXQP]#[s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
+    solvers =  [s.MOSEK_high,s.qpOASES,s.GUROBI_high,s.OSQP_high,s.PROXQP] #[s.OSQP_high,s.PDALM] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
     OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -50,18 +50,17 @@ if verbose:
         s.settings[key]['verbose'] = True
 
 # Number of instances per different dimension
-n_instances = 5 # 10 à la base #1 
+n_instances = 5 #
 n_dim = 10 # 20 à la base
 n_average = 10
 sparsity = 0.15
 
-
 # Run benchmark problems
 problems = [
-            #'Random QP'
+            #'Random QP',
             #'Random Degenerate QP'
-            #'Random Not Strongly Convex QP'
-            'Random Mixed QP'
+            'Random Not Strongly Convex QP'
+            #'Random Mixed QP'
             #'Eq QP'
             #'Eq QP_m=0.5n_density0.15'
             #'Random QP_m0.5_density0.15'
@@ -91,12 +90,14 @@ problem_parallel = {'Random QP': parallel,
 for problem in problems:
     example = Example(problem,
                       problem_dimensions[problem],
+                      #[11],
                       solvers,
                       s.settings,
                       OUTPUT_FOLDER,
                       n_instances,
                       n_average
-                      
+                      #1,
+                      #0
                       )
     example.solve(parallel=problem_parallel[problem])
 

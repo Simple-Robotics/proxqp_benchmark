@@ -39,6 +39,7 @@ class Example(object):
         self.name = name
         self.dims = dims
         self.n_instances = n_instances
+        self.n_average = n_average
         self.solvers = solvers
         self.settings = settings
         self.output_folder = output_folder
@@ -114,16 +115,16 @@ class Example(object):
                                     res = self.solve_single_example(n,
                                                           instance,
                                                           solver,
-                                                          settings,
-                                                          n_average
+                                                          settings
+                                                          
                                                           )
                                     run_time+=res.run_time
                                     
                                 res = self.solve_single_example(n,
                                                           instance,
                                                           solver,
-                                                          settings,
-                                                          n_average
+                                                          settings
+                                                          
                                                           )
                                 run_time += res.run_time
                                 n_solving+=1
@@ -137,8 +138,8 @@ class Example(object):
                                     self.solve_single_example(n,
                                                             instance,
                                                             solver,
-                                                            settings,
-                                                            n_average
+                                                            settings
+                                                            
                                                             )
                                 )
                                 
@@ -169,7 +170,7 @@ class Example(object):
 
     def solve_single_example(self,
                              dimension, instance_number,
-                             solver, settings,n_average):
+                             solver, settings):
         '''
         Solve 'example' with 'solver'
 
@@ -190,7 +191,7 @@ class Example(object):
 
         # Solve problem
         s = SOLVER_MAP[solver](settings)
-        results = s.solve(example_instance,n_average)
+        results = s.solve(example_instance,self.n_average)
 
         # Create solution as pandas table
         P = example_instance.qp_problem['P']

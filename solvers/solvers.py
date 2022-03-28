@@ -20,6 +20,7 @@ MOSEK = 'MOSEK'
 MOSEK_high = MOSEK + "_high"
 qpOASES = 'qpOASES'
 PROXQP = 'PROXQP'
+PDALM = 'PDALM'
 quadprog = 'quadprog'
 QPALM = "QPALM"
 
@@ -38,6 +39,7 @@ SOLVER_MAP = {OSQP: OSQPSolver,
               ECOS_high: ECOSSolver,
               qpOASES: qpOASESSolver,
               PROXQP : PROXQPSolver,
+              PDALM : PROXQPSolver,
               QPALM : QPALMSolver,
               quadprog : QUADPROGSolver}
 
@@ -48,7 +50,12 @@ eps_high = 1e-09
 # Solver settings
 settings = {
     PROXQP: {'eps_abs': eps_high,
-                'eps_rel': 0.
+                'eps_rel': 0.,
+                'PMM' : True
+    },
+    PDALM: {'eps_abs': eps_high,
+                'eps_rel': 0.,
+                'PMM' : False
     },
     QPALM: {'eps_abs': eps_high,
                 'eps_rel': 0.,

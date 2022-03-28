@@ -21,12 +21,22 @@ class RandomDegenerateQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        P = spa.random(n, n, density=0.5,
+        '''
+        P = spa.random(n, n, density=0.0125,
                        data_rvs=np.random.randn,
                        format='csc')
         self.P = P.dot(P.T).tocsc() + 1e-2 * spa.eye(n)
+        '''
+        P = spa.random(n, n, density=0.075,
+                       data_rvs=np.random.randn,
+                       format='csc').toarray()
+        P = (P+P.T)/2.         
+        #s = max(np.absolute(np.linalg.eigvals(P)))
+        s = min(np.linalg.eigvals(P))   
+        self.P = spa.coo_matrix(P) + (abs(s)+1e-02) * spa.eye(n)
+
         self.q = np.random.randn(n)
-        C = spa.random(n_in, n, density=0.5,
+        C = spa.random(n_in, n, density=0.15,
                             data_rvs=np.random.randn,
                             format='csc')
         # make sure the matrix rank deficient

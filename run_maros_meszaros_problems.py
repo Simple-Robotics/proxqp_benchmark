@@ -10,7 +10,7 @@ This code tests the solvers:
 '''
 from maros_meszaros_problems.maros_meszaros_problem import MarosMeszarosRunner
 import solvers.solvers as s
-from utils.benchmark import compute_stats_info,plot_performance_profiles
+from utils.benchmark import compute_stats_info,plot_performance_profiles,compute_performance_profiles
 import os
 import argparse
 
@@ -34,8 +34,8 @@ print('parallel', parallel)
 # Add high accuracy solvers when accurazy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
-    #solvers = [s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high]
-    solvers = [ s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high, s.qpOASES]
+    #solvers = [s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high, s.qpOASES]
+    solvers = [ s.PROXQP,s.OSQP_high,s.GUROBI_high,  s.qpOASES,s.MOSEK_high,]
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -50,14 +50,15 @@ if verbose:
         s.settings[key]['verbose'] = True
 
 # Run all examples
+
 maros_meszaros_runner = MarosMeszarosRunner(solvers,
                                             s.settings,
                                             OUTPUT_FOLDER)
 
-maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=0)
+maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=5)
 
 # Compute results statistics
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    high_accuracy=high_accuracy)
-
+compute_performance_profiles(solvers, OUTPUT_FOLDER,'')
 plot_performance_profiles(OUTPUT_FOLDER, solvers , '')

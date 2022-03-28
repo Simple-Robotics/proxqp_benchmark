@@ -56,8 +56,16 @@ class PROXQPSolver(object):
         ub = np.copy(problem['u'])
         lb = np.copy(problem['l'])
 
+        #print("ub :{}".format(ub))
+        #print("lb: {}".format(lb))
+        #input()
+
         eq_ids = lb == ub
         in_ids = lb != ub
+
+        #print("eq_ids : {}".format(eq_ids))
+        #print("in_ids : {}".format(in_ids))
+        #input()
 
         PlusInfId = ub == math.inf 
         NegInfId = lb == -math.inf 
@@ -76,14 +84,15 @@ class PROXQPSolver(object):
         n = H.shape[0]
         n_eq = A.shape[0]
         n_in = C.shape[0]
-
+        #print("n : {} ; n_eq : {} ; n_in : {}".format(n,n_eq,n_in))
+        #input()
         model = inria_ldlt_py.QPData(n,n_eq,n_in)
         results = inria_ldlt_py.QPResults(n,n_eq,n_in)
         prox_settings = inria_ldlt_py.QPSettings()
         work = inria_ldlt_py.QPWorkspace(n,n_eq,n_in)
-        #prox_settings.max_iter =
-        #prox_settings.eps_IG =
-        #prox_settings.max_iter_in = 
+        prox_settings.max_iter = 1000
+        prox_settings.eps_IG = min(self._settings['eps_abs'],1.e-9)
+        prox_settings.max_iter_in = 1500
 
 
         inria_ldlt_py.QPsetup(
@@ -104,7 +113,8 @@ class PROXQPSolver(object):
 
                 self._settings['eps_abs'],
                 self._settings['eps_rel'],
-                self._settings['verbose']  
+                self._settings['verbose'],
+                self._settings['PMM']
         )
 
         run_time = 0
