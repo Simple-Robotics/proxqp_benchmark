@@ -93,7 +93,10 @@ class PROXQPSolver(object):
         prox_settings.max_iter = 1000
         prox_settings.eps_IG = min(self._settings['eps_abs'],1.e-9)
         prox_settings.max_iter_in = 1500
-        prox_settings.warm_start = False
+        prox_settings.warm_start = self._settings['warm_start']
+        prox_settings.verbose = self._settings['verbose']
+        prox_settings.eps_abs = self._settings['eps_abs']
+        prox_settings.eps_rel = self._settings['eps_rel']
 
 
         inria_ldlt_py.QPsetup(
@@ -110,12 +113,7 @@ class PROXQPSolver(object):
                 prox_settings,
                 model,
                 work,
-                results,
-
-                self._settings['eps_abs'],
-                self._settings['eps_rel'],
-                self._settings['verbose'],
-                self._settings['warm_start']
+                results
         )
 
         run_time = 0
