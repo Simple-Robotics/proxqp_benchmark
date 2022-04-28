@@ -21,7 +21,7 @@ import inria_ldlt_py
 parser = argparse.ArgumentParser(description='Benchmark Problems Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=False,
+parser.add_argument('--verbose', help='Verbose solvers', default=True,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -37,12 +37,12 @@ print('parallel', parallel)
 # Add high accuracy solvers when accuracy
 if high_accuracy:
     #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers =  [s.MOSEK_high,s.qpOASES,s.GUROBI_high,s.OSQP_high,s.PROXQP] #[s.OSQP_high,s.PDALM] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
+    solvers =  [s.OSQP_ACC],#]s.PROXQP,s.QUADPROG#s.MOSEK_high,s.qpOASES,s.GUROBI_high,s.OSQP_high,s.PROXQP] #s.MOSEK_high,s.qpOASES,s.GUROBI_high,s.OSQP_high, [s.OSQP_high,s.PDALM] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
     OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
 else:
-    solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK, s.ECOS, s.qpOASES]
+    solvers = []
     OUTPUT_FOLDER = 'benchmark_problems'
 
 if verbose:
@@ -59,8 +59,8 @@ sparsity = 0.15
 problems = [
             #'Random QP',
             #'Random Degenerate QP'
-            'Random Not Strongly Convex QP'
-            #'Random Mixed QP'
+            #'Random Not Strongly Convex QP'
+            'Random Mixed QP'
             #'Eq QP'
             #'Eq QP_m=0.5n_density0.15'
             #'Random QP_m0.5_density0.15'
@@ -86,31 +86,36 @@ problem_parallel = {'Random QP': parallel,
                     }
 
 # Run all examples
-
+#n_average = 1
+#n_instances = 5
 for problem in problems:
     example = Example(problem,
-                      problem_dimensions[problem],
-                      #[11],
+                      #problem_dimensions[problem],
+                      [400],
+                      #[10],
+                      #[4],
                       solvers,
                       s.settings,
                       OUTPUT_FOLDER,
-                      n_instances,
-                      n_average
+                      5,
+                      1
+                      #n_average
                       #1,
-                      #0
+                      #1
                       )
     example.solve(parallel=problem_parallel[problem])
 
 # Compute results statistics
-
+'''
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    problems=problems,
                    high_accuracy=high_accuracy)
-
+'''
 # plots 
 
 #suffix = '_sparsity_' + sparsity + '_high_accuracy'
-
+'''
 suffix = ''
 for problem in problems:
     compute_time_series_plot(solvers, problem, suffix)
+'''

@@ -90,7 +90,7 @@ class MarosMeszarosRunner(object):
                         full_name = os.path.join(".", "problem_classes",
                                  PROBLEMS_FOLDER, problem)
                         instance = MarosMeszaros(full_name)
-                        if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000 ):
+                        if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000 and (problem in ["QCAPRI"]) ):#and not(problem in ["PRIMALC2","PRIMALC8","PRIMALC5","QSCAGR25","PRIMALC1","QSCFXM1","QSCTAP1","QGROW15","QSCAGR7","QSHARE2B"])):
                             results.append(self.solve_single_example(problem,
                                                                  solver,
                                                                  settings,n_average))
@@ -129,16 +129,17 @@ class MarosMeszarosRunner(object):
                                  PROBLEMS_FOLDER, problem)
         instance = MarosMeszaros(full_name)
 
-        # Solve problem
-        s = SOLVER_MAP[solver](settings)
-        results = s.solve(instance,n_average)
-
         # Create solution as pandas table
         P = instance.qp_problem['P']
         A = instance.qp_problem['A']
-        N = P.nnz + A.nnz
+        N = P.nnz + A.nnz     
 
-        print(" - Solving %s with solver %s P.nnz %s A.nnz %s" % (problem, solver, P.nnz, A.nnz))        
+        # Solve problem
+
+        s = SOLVER_MAP[solver](settings)
+        print(" - Solving %s with solver %s P.nnz %s A.nnz %s" % (problem, solver, P.nnz, A.nnz))  
+
+        results = s.solve(instance,n_average)
 
         # Add constant part to objective value
         # NB. This is needed to match the objective in the original

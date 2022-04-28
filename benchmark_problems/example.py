@@ -70,7 +70,8 @@ class Example(object):
             pool = Pool(processes=min(self.n_instances, cpu_count()))
 
         # Iterate over all solvers
-        for solver in self.solvers:
+        for solver in self.solvers[0]:
+            print("solver : {} ; solvers:{}".format(solver,self.solvers))
             settings = self.settings[solver]
 
             # Initialize solver results
@@ -106,7 +107,7 @@ class Example(object):
                     else:
                         n_results = []
                         for instance in range(self.n_instances):
-                            if solver in ['qpOASES',"MOSEK_high","quadprog"]:
+                            if solver in ['qpOASES',"MOSEK_high","QUADPROG"]:
                                 # there is no reset function to reset the workspace while keeping it in memory
                                 run_time = 0
                                 n_solving = n_average

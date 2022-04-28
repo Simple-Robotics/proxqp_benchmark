@@ -93,6 +93,7 @@ class PROXQPSolver(object):
         prox_settings.max_iter = 1000
         prox_settings.eps_IG = min(self._settings['eps_abs'],1.e-9)
         prox_settings.max_iter_in = 1500
+        prox_settings.warm_start = False
 
 
         inria_ldlt_py.QPsetup(
@@ -114,7 +115,7 @@ class PROXQPSolver(object):
                 self._settings['eps_abs'],
                 self._settings['eps_rel'],
                 self._settings['verbose'],
-                self._settings['PMM']
+                self._settings['warm_start']
         )
 
         run_time = 0
@@ -155,6 +156,12 @@ class PROXQPSolver(object):
 
         y[eq_ids] = results.y
         y[in_ids] = results.z
+
+        #print("primal equality : {}".format(np.linalg.norm(A@x-b,np.inf)))
+        #print("primal inequality : {}".format(np.linalg.norm(np.maximum(C@x-u,0.),np.inf)))
+        #print(f"dual residual {np.linalg.norm(H@x + g + A.T@results.y + C.T @ results.z,np.inf)}")
+        #print("x : {} ;  y : {} ; z : {}".format(x, results.y, results.z))
+        #input()
 
         if not is_qp_solution_optimal(problem, x, y,
                                         high_accuracy=self._settings.get('high_accuracy')):

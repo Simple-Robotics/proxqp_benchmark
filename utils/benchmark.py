@@ -79,13 +79,15 @@ def compute_performance_profiles(solvers, problems_type, problem_name = ""):
         # Get total number of problems
         n_problems = len(df)
 
-        t[solver] = df['run_time'].values
+        #t[solver] = df['run_time'].values # when using time
+        t[solver] = df['iter'].values
         status[solver] = df['status'].values
 
         # Set maximum time for solvers that did not succeed
         for idx in range(n_problems):
             if status[solver][idx] not in statuses.SOLUTION_PRESENT:
-                t[solver][idx] = MAX_TIMING
+                #t[solver][idx] = MAX_TIMING
+                t[solver][idx] = 5.E8 # max iter
 
     r = {}  # Dictionary of relative times for each solver/problem
     for s in solvers:
@@ -143,8 +145,8 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     err_max = {}
 
     # Get time and status
-    for solver in solvers:
-        print("solver : {}".format(solver))
+    for solver in solvers[0]:
+        print("solver : {} ; solvers : {}".format(solver,solvers))
         path = os.path.join('.', 'results/benchmark_problems_high_accuracy/',solver, problems_type + suffix
                             , 'full.csv')
         df = pd.read_csv(path)
@@ -178,6 +180,7 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     # Compute curve for all solvers
     
     #plt.figure(0)
+    print("t:{}".format(t))
     plt.rcParams.update({'font.size': 12})
     fig, ax = plt.subplots()
     for solver in solvers:

@@ -14,10 +14,11 @@ class RandomMixedQPExample(object):
         Generate problem in QP format and CVXPY format
         '''
         # Set random seed
+        #seed = 4
         np.random.seed(seed)
 
-        m = 2 * int(n/4)
-
+        m =  int(n/4) + int(n/4)
+        #m  = n 
         n_eq = int(n/4)
         n_in = int(n/4)
 
@@ -48,13 +49,17 @@ class RandomMixedQPExample(object):
         print("P : {}".format(P))
         self.P = spa.coo_matrix(P)
         '''
+        
         P = spa.random(n, n, density=0.075,
                        data_rvs=np.random.randn,
                        format='csc').toarray()
         P = (P+P.T)/2.  
-        s = min(np.linalg.eigvals(P))        
-        #s = max(np.absolute(np.linalg.eigvals(P)))
+
+        #P = spa.eye(n)
+        #s = min(np.linalg.eigvals(P))        
+        s = max(np.absolute(np.linalg.eigvals(P)))
         self.P = spa.coo_matrix(P) + (abs(s)+1e-02) * spa.eye(n) # to be sure being strictly convex
+        #self.P =  spa.eye(n) # to be sure being strictly convex
 
         #self.P = spa.coo_matrix(skd.make_sparse_spd_matrix(dim=n, alpha=1. - 0.15))
         #P = (P+P.T)/2. 
@@ -68,17 +73,19 @@ class RandomMixedQPExample(object):
         print("sparsity of P : {}".format((self.P.nnz)/(n**2)))
         #input()
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=0.15,
-                            data_rvs=np.random.randn,
-                            format='csc')
+        self.A = spa.random(m, n, density=0.15,data_rvs=np.random.randn,format='csc')
+        #self.A =spa.csc_matrix(spa.eye(m))
+        #print("")
         v = np.random.randn(n)   # Fictitious solution
         delta = np.random.rand(m)  # To get inequality
-        self.u = self.A@v
+        self.u = self.A@v 
+        #self.l = self.A@v
+        
         self.l = (- np.inf * np.ones(m)) 
-
+        
         self.u[n_in:] += delta[n_in:]
         self.l[:n_eq] = self.u[:n_eq]
-
+        
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()
 
