@@ -51,7 +51,7 @@ class OSQPSolver(object):
         for i in range(n_solving):
 
             results = m.solve()
-            run_time += results.info.run_time
+            run_time += results.info.run_time+ results.info.setup_time
             m = osqp.OSQP()
             m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
                 problem['u'],
@@ -59,7 +59,7 @@ class OSQPSolver(object):
 
 
         results = m.solve()
-        run_time += results.info.run_time
+        run_time += results.info.run_time + results.info.setup_time
         n_solving +=1
         run_time /= n_solving
 

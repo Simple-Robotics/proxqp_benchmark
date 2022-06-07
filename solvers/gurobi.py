@@ -3,7 +3,7 @@ import numpy as np
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
-
+import time
 
 class GUROBISolver(object):
 
@@ -137,35 +137,40 @@ class GUROBISolver(object):
                     and (param != "high_accuracy"):
                 model.setParam(param, value)
 
-        # Update model
-        model.update()
-
-
-        # Solve problem
-
         run_time = 0
+        # Update model
+        tic = time.time()
+        model.update()
+        toc = time.time()
+        run_time += toc-tic
+        # Solve problem
         n_solving = n_average
         for i in range(n_solving):
 
             try:
+                tic= time.time()
                 model.optimize()
+                toc= time.time()
+                
             except:  # Error in the solution
                 if self._settings['verbose']:
                     print("Error in GUROBI solution\n")
-                run_time = model.Runtime
+                run_time = toc-tic#model.Runtime
                 return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
 
-            run_time += model.Runtime
+            run_time += toc-tic#model.Runtime
             model.reset(0)
 
         try:
+                tic = time.time()
                 model.optimize()
+                toc = time.time()
         except:  # Error in the solution
                 if self._settings['verbose']:
                     print("Error in GUROBI solution\n")
-                run_time = model.Runtime
+                run_time = toc-tic#model.Runtime
                 return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
-        run_time += model.Runtime
+        run_time += toc-tic#model.Runtime
         n_solving +=1
         run_time /= n_solving
 
@@ -183,7 +188,7 @@ class GUROBISolver(object):
         status = self.STATUS_MAP.get(model.Status, s.SOLVER_ERROR)
 
         # Get computation time
-        run_time = model.Runtime
+        #run_time = model.Runtime
 
         # Total Number of iterations
         niter = model.BarIterCount

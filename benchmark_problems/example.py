@@ -70,7 +70,7 @@ class Example(object):
             pool = Pool(processes=min(self.n_instances, cpu_count()))
 
         # Iterate over all solvers
-        for solver in self.solvers[0]:
+        for solver in self.solvers:
             print("solver : {} ; solvers:{}".format(solver,self.solvers))
             settings = self.settings[solver]
 
@@ -96,7 +96,7 @@ class Example(object):
 
                 if not os.path.isfile(n_file_name):
 
-                    if parallel and solver not in ['ECOS', 'ECOS_high', 'qpOASES']:
+                    if parallel and solver not in ['qpOASES']:
                         # NB. ECOS and qpOASES crahs if the problem sizes are too large
                         instances_list = list(range(self.n_instances))
                         n_results = pool.starmap(self.solve_single_example,
@@ -107,7 +107,7 @@ class Example(object):
                     else:
                         n_results = []
                         for instance in range(self.n_instances):
-                            if solver in ['qpOASES',"MOSEK_high","QUADPROG"]:
+                            if solver in ['qpOASES',"MOSEK","quadprog"]:
                                 # there is no reset function to reset the workspace while keeping it in memory
                                 run_time = 0
                                 n_solving = n_average

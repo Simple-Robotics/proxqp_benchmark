@@ -16,12 +16,12 @@ from utils.general import gen_int_log_space
 from utils.benchmark import compute_stats_info,plot_performance_profiles,compute_time_series_plot
 import os
 import argparse
-import inria_ldlt_py 
+import proxsuite
 
 parser = argparse.ArgumentParser(description='Benchmark Problems Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=True,
+parser.add_argument('--verbose', help='Verbose solvers', default=False,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -36,8 +36,7 @@ print('parallel', parallel)
 
 # Add high accuracy solvers when accuracy
 if high_accuracy:
-    #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high, s.ECOS_high, s.qpOASES,s.quadprog] # ECOS returns nans... ; quadprog gives always an error (dimension mismatch..)
-    solvers =  [s.OSQP_ACC],#]s.PROXQP,s.QUADPROG#s.MOSEK_high,s.qpOASES,s.GUROBI_high,s.OSQP_high,s.PROXQP] #s.MOSEK_high,s.qpOASES,s.GUROBI_high,s.OSQP_high, [s.OSQP_high,s.PDALM] #[ s.OSQP_high,s.PROXQP,s.GUROBI_high,s.MOSEK_high,s.qpOASES,s.quadprog] # qpalm crashes as well (segfault..)  , ,
+    solvers =  [s.MOSEK,s.qpOASES,s.GUROBI,s.quadprog,s.OSQP,s.PROXQP]
     OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -50,72 +49,52 @@ if verbose:
         s.settings[key]['verbose'] = True
 
 # Number of instances per different dimension
-n_instances = 5 #
-n_dim = 10 # 20 à la base
+n_instances = 5
+n_dim = 10
 n_average = 10
 sparsity = 0.15
 
 # Run benchmark problems
 problems = [
-            #'Random QP',
             #'Random Degenerate QP'
             #'Random Not Strongly Convex QP'
             'Random Mixed QP'
-            #'Eq QP'
-            #'Eq QP_m=0.5n_density0.15'
-            #'Random QP_m0.5_density0.15'
-            #'Random_Mixed_QP'
-            #'Random_Degenerate_QP'
-            #'Random Not Strongly Convex QP_density0.15_m=0.5n'
             ]
 
-problem_dimensions = {'Random QP': gen_int_log_space(10, 1000, n_dim),
+problem_dimensions = {
                       'Random Mixed QP': gen_int_log_space(10, 1000, n_dim),
                       'Random Degenerate QP': gen_int_log_space(10, 1000, n_dim),
-                      'Random Not Strongly Convex QP': gen_int_log_space(10, 1000, n_dim),
-                      'Eq QP': gen_int_log_space(10, 1000, n_dim)
+                      'Random Not Strongly Convex QP': gen_int_log_space(10, 1000, n_dim)
                       }
 
 # Some problems become too big to be executed in parallel and we solve them
 # serially
-problem_parallel = {'Random QP': parallel,
+problem_parallel = {
                     'Random Mixed QP': parallel,
                     'Random Degenerate QP': parallel,
-                    'Random Not Strongly Convex QP': parallel,
-                    'Eq QP': parallel
+                    'Random Not Strongly Convex QP': parallel
                     }
 
 # Run all examples
-#n_average = 1
-#n_instances = 5
 for problem in problems:
     example = Example(problem,
-                      #problem_dimensions[problem],
-                      [400],
-                      #[10],
-                      #[4],
+                      problem_dimensions[problem][:-1],
                       solvers,
                       s.settings,
                       OUTPUT_FOLDER,
-                      5,
-                      1
-                      #n_average
-                      #1,
-                      #1
+                      n_instances,
+                      n_average
                       )
     example.solve(parallel=problem_parallel[problem])
 
 # Compute results statistics
-'''
+
 compute_stats_info(solvers, OUTPUT_FOLDER,
                    problems=problems,
                    high_accuracy=high_accuracy)
-'''
+
 # plots 
 
-#suffix = '_sparsity_' + sparsity + '_high_accuracy'
-'''
 suffix = ''
 for problem in problems:
     compute_time_series_plot(solvers, problem, suffix)
-'''

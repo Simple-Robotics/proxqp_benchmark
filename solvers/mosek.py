@@ -4,7 +4,7 @@ import scipy.sparse as spa
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
-
+import time 
 
 class MOSEKSolver(object):
 
@@ -108,8 +108,10 @@ class MOSEKSolver(object):
             task.putqobj(P.row, P.col, P.data)
 
         # Set problem minimization
+        tic = time.time()
         task.putobjsense(mosek.objsense.minimize)
-
+        toc = time.time()
+        total_time = toc-tic
         '''
         Set parameters
         '''
@@ -128,7 +130,10 @@ class MOSEKSolver(object):
         '''
         try:
             # Optimization and check termination code
+            tic = time.time()
             termination_code = task.optimize()
+            toc = time.time()
+            total_time+=toc-tic
         except:
             if self._settings['verbose']:
                 print("Error in MOSEK solution\n")
@@ -158,7 +163,7 @@ class MOSEKSolver(object):
             status = s.TIME_LIMIT
 
         # Get statistics
-        cputime = task.getdouinf(mosek.dinfitem.optimizer_time)
+        cputime = total_time#task.getdouinf(mosek.dinfitem.optimizer_time)
         total_iter = task.getintinf(mosek.iinfitem.intpnt_iter)
 
         if status in s.SOLUTION_PRESENT:

@@ -34,13 +34,10 @@ print('parallel', parallel)
 # Add high accuracy solvers when accurazy
 print("s.OSQP_ACC : {}".format(s.OSQP_ACC))
 if high_accuracy:
-    #solvers = [s.OSQP_high, s.OSQP_polish_high, s.GUROBI_high, s.MOSEK_high]
-    #solvers = [s.OSQP_high, s.PROXQP, s.GUROBI_high, s.MOSEK_high, s.qpOASES]
-    solvers = [ s.OSQP_ACC,s.OSQP_high]
+    solvers = [s.PROXQP,s.OSQP,s.qpOASES,s.GUROBI,s.quadprog,s.MOSEK]
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
-        #s.settings[key]['eps_abs'] = 1.e-6
 else:
     solvers = [s.OSQP, s.OSQP_polish, s.GUROBI, s.MOSEK]
     OUTPUT_FOLDER = 'maros_meszaros_problems'
@@ -56,7 +53,7 @@ maros_meszaros_runner = MarosMeszarosRunner(solvers,
                                             s.settings,
                                             OUTPUT_FOLDER)
 
-maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=0)
+maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=1)
 
 # Compute results statistics
 compute_stats_info(solvers, OUTPUT_FOLDER,

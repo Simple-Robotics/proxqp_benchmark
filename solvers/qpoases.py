@@ -3,7 +3,7 @@ import numpy as np
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal, stdout_redirected
-
+import time
 
 class qpOASESSolver(object):
 
@@ -122,14 +122,16 @@ class qpOASESSolver(object):
             qpoases_nWSR = np.array([1000000])
 
         # Solve problem
+        tic = time.time()
         status = qpoases_m.init(P, q, A, lx, ux, l, u,
                                 qpoases_nWSR, qpoases_cpu_time)
-
+        toc = time.time()
+        total_time = toc-tic
         # Check status
         status = self.STATUS_MAP.get(status, s.SOLVER_ERROR)
 
         # run_time
-        run_time = qpoases_cpu_time[0]
+        run_time = total_time#qpoases_cpu_time[0]
 
         # number of iterations
         niter = qpoases_nWSR[0]

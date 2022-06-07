@@ -13,8 +13,6 @@ class RandomMixedQPExample(object):
         '''
         Generate problem in QP format and CVXPY format
         '''
-        # Set random seed
-        #seed = 4
         np.random.seed(seed)
 
         m =  int(n/4) + int(n/4)
@@ -26,61 +24,20 @@ class RandomMixedQPExample(object):
         self.n = int(n)
         self.m = m
         
-        '''
-        P = spa.random(n, n, density=0.0125,
-                       data_rvs=np.random.randn,
-                       format='csc')
-        self.P = P.dot(P.T).tocsc() + 1e-02 * spa.eye(n)
-        '''
-
-        ''' other idea but gives full dense P...
-        s = np.random.exponential(size = n)
-        print("s : {}".format(s))
-        for i in range(n):
-            u = np.random.rand()
-            print("u : {}".format(u))
-            input()
-            if (u>0.15):
-                s[i] = 0.
-        o = ortho_group.rvs(n)
-        print("s : {}".format(s))
-        P = o.dot(np.diag(s).dot(o.T)) + 1e-02 * spa.eye(n)
-        #P = (P+P.T)/2. 
-        print("P : {}".format(P))
-        self.P = spa.coo_matrix(P)
-        '''
-        
         P = spa.random(n, n, density=0.075,
                        data_rvs=np.random.randn,
                        format='csc').toarray()
         P = (P+P.T)/2.  
-
-        #P = spa.eye(n)
-        #s = min(np.linalg.eigvals(P))        
+     
         s = max(np.absolute(np.linalg.eigvals(P)))
         self.P = spa.coo_matrix(P) + (abs(s)+1e-02) * spa.eye(n) # to be sure being strictly convex
-        #self.P =  spa.eye(n) # to be sure being strictly convex
-
-        #self.P = spa.coo_matrix(skd.make_sparse_spd_matrix(dim=n, alpha=1. - 0.15))
-        #P = (P+P.T)/2. 
-        #U,S,Ut = np.linalg.svd(P.toarray(), full_matrices=True)
-        #S = np.maximum(S,0.) + 1e-02 # ensure matrix is positive definite
-        #print("s : {}".format(S))
-        #P = U @ np.diag(S) @ Ut
-        #P = (P+P.T)/2. 
-        #self.P = spa.coo_matrix(P)
-
         print("sparsity of P : {}".format((self.P.nnz)/(n**2)))
-        #input()
         self.q = np.random.randn(n)
         self.A = spa.random(m, n, density=0.15,data_rvs=np.random.randn,format='csc')
-        #self.A =spa.csc_matrix(spa.eye(m))
-        #print("")
         v = np.random.randn(n)   # Fictitious solution
         delta = np.random.rand(m)  # To get inequality
         self.u = self.A@v 
-        #self.l = self.A@v
-        
+
         self.l = (- np.inf * np.ones(m)) 
         
         self.u[n_in:] += delta[n_in:]

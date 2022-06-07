@@ -138,32 +138,23 @@ class QUADPROGSolver(object):
                 qp_b = -hstack([u, -l])
             meq = 0
         try:
-            #qp_G = scipy.linalg.inv(eigenpy.LLT(H).matrixL())
-            qp_G = scipy.linalg.inv(scipy.linalg.cholesky(H))
-            
-            #np.save("qp_G_fact.npy",qp_G)
-            #np.save("qp_a.npy",qp_a)
-            #np.save("qp_C.npy",qp_C)
-            #np.save("qp_b.npy",qp_b)
-            #print("m : {}".format(meq))
+            #qp_G = scipy.linalg.inv(eigenpy.LLT(H).matrixL())            
+            #qp_G = scipy.linalg.inv(scipy.linalg.cholesky(H))
 
-
-            factorize = True
+            factorize = False
             tic = time.time()
             x, objval, xu, niter, y, iact = solve_qp(qp_G, qp_a, qp_C, qp_b, meq, factorize )
             toc = time.time()
             run_time = toc - tic
             n_in = sum(in_ids)
             y_sol = np.zeros(meq+n_in)
-            #print(" dual residual with -y : {}".format(np.linalg.norm(H.dot(x)-qp_a+qp_C.dot(-y),np.inf)))
-            #print(" dual residual with +y: {}".format(np.linalg.norm(H.dot(x)-qp_a+qp_C.dot(+y),np.inf)))
-            #print("n_in : {} ; meq : {}".format(n_in,meq))
-            #print("y : {}".format(y))
+
             if (meq>0 and n_in==0):
                 y_sol = -y
             if (meq>0 and n_in>0):
                 y_sol[eq_ids] = y[:meq]
                 y_sol[in_ids] = (-y[meq+n_in:meq+2*n_in] + y[meq:meq+n_in])
+
             if (meq==0 and n_in>0):
                 y_sol[in_ids] = -y[meq+n_in:meq+2*n_in] + y[meq:meq+n_in]
 
@@ -189,7 +180,10 @@ class QUADPROGSolver(object):
             error = str(e)
             if "matrix G is not positive definite" in error:
                 # quadprog writes G the cost matrix that we write P in this package
-                raise ValueError("matrix P is not positive definite") from e
+                print("matrix P is not positive definite")
+                #raise ValueError("matrix P is not positive definite") from e
+                return Results(s.PRIMAL_OR_DUAL_INFEASIBLE, None, None, None,
+                            None, None)
             if "no solution" in error:
                 return Results(s.SOLVER_ERROR, None, None, None,
                             None, None)

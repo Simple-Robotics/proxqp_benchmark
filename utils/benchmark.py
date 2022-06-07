@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pylab as plt
 from matplotlib.ticker import MultipleLocator
+from cycler import cycler
 
 MAX_TIMING = time_limit
 
@@ -145,10 +146,11 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     err_max = {}
 
     # Get time and status
-    for solver in solvers[0]:
-        print("solver : {} ; solvers : {}".format(solver,solvers))
+    for solver in solvers:
+       
         path = os.path.join('.', 'results/benchmark_problems_high_accuracy/',solver, problems_type + suffix
                             , 'full.csv')
+        print("solver : {} ; solvers : {} ; path :{}".format(solver,solvers,path))
         df = pd.read_csv(path)
 
         # Get total number of problems
@@ -157,45 +159,36 @@ def compute_time_series_plot(solvers, problems_type, suffix):
         # Set maximum time for solvers that did not succeed
         
         status[solver] = df['status'].values
-        #N[solver] = df['n'].values
 
         for idx in range(n_problems):
-            #print('idx : {}'.format(idx))
             if status[solver][idx] not in statuses.SOLUTION_PRESENT:
-                #t[solver][idx] = MAX_TIMING
                 df["run_time"][idx] = MAX_TIMING
-
-        #t[solver] = df['run_time'].values
-
         t[solver] = df.groupby(["n"])["run_time"].median().tolist()
-        #print("t[solver] : {}".format(t[solver]))
         err_min[solver] = df.groupby(["n"])["run_time"].min().tolist()
         err_max[solver] = df.groupby(["n"])["run_time"].max().tolist()
 
         N[solver] = df['n'].values.tolist()
         N[solver] = list(set(N[solver]))
         N[solver].sort()
-        #print("N[solver]  : {}".format(N[solver]))
-
+    color = {
+        'MOSEK':'#9467bd',
+        'qpOASES':'#8C564b',
+        'GUROBI':'#2ca02c',
+        'quadprog':'#d62728',
+        'OSQP':'#ff7f0e',
+        'PROXQP':'#1f77b4'
+    }
     # Compute curve for all solvers
-    
-    #plt.figure(0)
-    print("t:{}".format(t))
     plt.rcParams.update({'font.size': 12})
     fig, ax = plt.subplots()
     for solver in solvers:
         y_error = np.vstack(( np.array(t[solver]) - np.array(err_min[solver]), np.array(err_max[solver]) - np.array(t[solver])  ))
-        #plt.plot(N[solver], t[solver], label=solver)
-        plt.errorbar(N[solver], t[solver],yerr = y_error, label=solver,fmt ='o')
-    #plt.xlim(1., 100000.)
-    #plt.ylim(0., 1.)
+        plt.errorbar(N[solver], t[solver],yerr = y_error, label=solver,fmt ='o',color=color[solver])
     plt.xlabel('d')
     plt.ylabel('Timings (s)')
     plt.xscale('log')
     plt.yscale('log')
     plt.legend()
-    #plt.grid()
-    #plt.minorticks_on()
     ax.yaxis.get_ticklocs(minor=True)
     ax.set_yticks([1.e-5,0.5 * 1.e-4,1.e-4,0.5 * 1.e-3,1.e-3,0.5 * 1.e-2,1.e-2,0.5 * 1.e-1,1.e-1,0.5,1,10,100,1000])
     y_minor = matplotlib.ticker.LogLocator(base = 10.0, subs = np.arange(1.0, 10.0) * 0.1, numticks = 10)
@@ -208,7 +201,6 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     ax.grid( which='minor', color='grey', linestyle='--',axis="y")
 
     plt.show(block=False)
-    #results_file = './results/%s/%s.png' % (problems, problems)
     results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + problems_type + suffix + ".pdf"
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
