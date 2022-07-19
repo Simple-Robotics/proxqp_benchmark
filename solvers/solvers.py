@@ -11,7 +11,6 @@ OSQP = 'OSQP'
 MOSEK = 'MOSEK'
 qpOASES = 'qpOASES'
 PROXQP = 'PROXQP'
-PROXQP_Martinez = 'PROXQP_Martinez'
 PROXQP_sparse = 'PROXQP_sparse'
 quadprog = 'quadprog'
 
@@ -20,7 +19,6 @@ SOLVER_MAP = {OSQP: OSQPSolver,
               MOSEK: MOSEKSolver,
               qpOASES: qpOASESSolver,
               PROXQP : PROXQPSolver,
-              PROXQP_Martinez : PROXQPSolver,
               PROXQP_sparse:PROXQPSolver,
               quadprog : QUADPROGSolver
               }

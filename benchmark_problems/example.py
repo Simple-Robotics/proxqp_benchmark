@@ -7,7 +7,6 @@ from solvers.solvers import SOLVER_MAP
 from problem_classes.random_mixed_qp import RandomMixedQPExample
 from problem_classes.random_degenerate_qp import RandomDegenerateQPExample
 from problem_classes.random_not_strongly_convex_qp import RandomNotStronglyConvexQPExample
-from problem_classes.eq_qp import EqQPExample
 from utils.general import make_sure_path_exists
 
 
@@ -15,8 +14,7 @@ from utils.general import make_sure_path_exists
 examples = [
             RandomMixedQPExample,
             RandomDegenerateQPExample,
-            RandomNotStronglyConvexQPExample,
-            EqQPExample
+            RandomNotStronglyConvexQPExample
             ]
 
 

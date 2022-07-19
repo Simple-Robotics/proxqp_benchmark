@@ -8,7 +8,6 @@ from typing import Optional
 from warnings import warn
 from numpy import hstack,vstack, ndarray
 import time
-import eigenpy
 import scipy
 
 import numpy.linalg as la
@@ -137,8 +136,7 @@ class QUADPROGSolver(object):
                 qp_C = -vstack([C, -C]).T
                 qp_b = -hstack([u, -l])
             meq = 0
-        try:
-            #qp_G = scipy.linalg.inv(eigenpy.LLT(H).matrixL())            
+        try:         
             #qp_G = scipy.linalg.inv(scipy.linalg.cholesky(H))
 
             factorize = False

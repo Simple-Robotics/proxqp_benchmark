@@ -13,11 +13,11 @@ The whole API comes from the one developped by the authors of [OSQP](https://git
 
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
 
-To run these scripts you need the standard python libraries: `pandas`, `matplotlib`, `numpy`, `scipy` and `cvxpy`, which can be installed using for example conda:
+To run these scripts you need the standard python libraries: `pandas`, `matplotlib`, `numpy`, `scipy`, `scikit-learn`, and `cvxpy`, which can be installed using for example conda:
 ```bash
 conda install pandas matplotlib numpy scipy cvxpy
 ```
-You need further as well to install the solvers `gurobi`, `mosek`, `OSQP`, `qpOASES` and `quadprog`. The first four can be installed using conda:
+You need further as well to install the solvers `gurobi`, `mosek`, `OSQP`, `qpOASES` and `quadprog`. The first four can be installed for example using conda:
 ```bash
 conda config --add channels https://conda.anaconda.org/gurobi
 conda install gurobi
@@ -27,7 +27,7 @@ conda install -c omnia quadprog
 ```
 Gurobi and Mosek requires a license for working. Note that you are an academic, they provide specific and temporary free licenses.
 
-Finally, for installing qpOASES, you should look at their [install file](https://github.com/coin-or/qpOASES/blob/master/INSTALL.txt) in their github repository. 
+Finally, for installing qpOASES, you should look at their [install file](https://github.com/coin-or/qpOASES/blob/master/INSTALL.txt) in their github repository.
 
 All the scripts come with options (default to `False`)
 
