@@ -80,15 +80,15 @@ def compute_performance_profiles(solvers, problems_type, problem_name = ""):
         # Get total number of problems
         n_problems = len(df)
 
-        #t[solver] = df['run_time'].values # when using time
-        t[solver] = df['iter'].values
+        t[solver] = df['run_time'].values # when using time
+        #t[solver] = df['iter'].values
         status[solver] = df['status'].values
 
         # Set maximum time for solvers that did not succeed
         for idx in range(n_problems):
             if status[solver][idx] not in statuses.SOLUTION_PRESENT:
-                #t[solver][idx] = MAX_TIMING
-                t[solver][idx] = 5.E8 # max iter
+                t[solver][idx] = MAX_TIMING
+                #t[solver][idx] = 5.E8 # max iter
 
     r = {}  # Dictionary of relative times for each solver/problem
     for s in solvers:
@@ -176,7 +176,9 @@ def compute_time_series_plot(solvers, problems_type, suffix):
         'GUROBI':'#2ca02c',
         'quadprog':'#d62728',
         'OSQP':'#ff7f0e',
-        'PROXQP':'#1f77b4'
+        'PROXQP':'#1f77b4',
+        'PROXQP_sparse':'b',
+        'PROXQP_Martinez':'g'
     }
     # Compute curve for all solvers
     plt.rcParams.update({'font.size': 12})
@@ -205,6 +207,76 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     print("Saving plots to %s" % results_file)
     plt.savefig(results_file)
 
+def compute_time_series_plot_for_different_accuracies(solvers, problems_type, suffix):
+    t = {}
+    status = {}
+    N = {}
+
+    err_min = {}
+    err_max = {}
+
+    # Get time and status
+    for solver in solvers:
+       
+        path = os.path.join('.', 'results/benchmark_problems_high_accuracy/',solver, problems_type + suffix
+                            , 'full.csv')
+        print("solver : {} ; solvers : {} ; path :{}".format(solver,solvers,path))
+        df = pd.read_csv(path)
+
+        # Get total number of problems
+        n_problems = len(df)
+
+        # Set maximum time for solvers that did not succeed
+        
+        status[solver] = df['status'].values
+
+        for idx in range(n_problems):
+            if status[solver][idx] not in statuses.SOLUTION_PRESENT:
+                df["run_time"][idx] = MAX_TIMING
+        t[solver] = df.groupby(["eps"])["run_time"].median().tolist()
+        err_min[solver] = df.groupby(["eps"])["run_time"].min().tolist()
+        err_max[solver] = df.groupby(["eps"])["run_time"].max().tolist()
+
+        N[solver] = df['eps'].values.tolist()
+        N[solver] = list(set(N[solver]))
+        N[solver].sort()
+    color = {
+        'MOSEK':'#9467bd',
+        'qpOASES':'#8C564b',
+        'GUROBI':'#2ca02c',
+        'quadprog':'#d62728',
+        'OSQP':'#ff7f0e',
+        'PROXQP':'#1f77b4',
+        'PROXQP_sparse':'b'
+    }
+    # Compute curve for all solvers
+    plt.rcParams.update({'font.size': 12})
+    fig, ax = plt.subplots()
+    for solver in solvers:
+        y_error = np.vstack(( np.array(t[solver]) - np.array(err_min[solver]), np.array(err_max[solver]) - np.array(t[solver])  ))
+        plt.errorbar(t[solver],N[solver],xerr = y_error, label=solver,fmt ='o',color=color[solver])
+    plt.xlabel('Timings (s)')
+    plt.ylabel('Accuracy')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.legend()
+    ax.xaxis.get_ticklocs(minor=True)
+    ax.set_xticks([1.e-5,0.5 * 1.e-4,1.e-4,0.5 * 1.e-3,1.e-3,0.5 * 1.e-2,1.e-2,0.5 * 1.e-1,1.e-1,0.5,1,10,100,1000])
+    #ax.yaxis.get_ticklocs(minor=True)
+    #ax.set_yticks([1.e-5,0.5 * 1.e-4,1.e-4,0.5 * 1.e-3,1.e-3,0.5 * 1.e-2,1.e-2,0.5 * 1.e-1,1.e-1,0.5,1,10,100,1000])
+    #y_minor = matplotlib.ticker.LogLocator(base = 10.0, subs = np.arange(1.0, 10.0) * 0.1, numticks = 10)
+    #ax.yaxis.set_minor_locator(y_minor)
+    #ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+
+    #plt.tick_params(axis='y', which='minor')
+    #ax.minorticks_on()
+    #ax.grid( which='major', color='b', linestyle='-',axis="y")
+    #ax.grid( which='minor', color='grey', linestyle='--',axis="y")
+
+    plt.show(block=False)
+    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + problems_type + suffix + "_by_accuracy" ".pdf"
+    print("Saving plots to %s" % results_file)
+    plt.savefig(results_file)
 def geom_mean(t, shift=10.):
     """Compute the shifted geometric mean using formula from
     http://plato.asu.edu/ftp/shgeom.html

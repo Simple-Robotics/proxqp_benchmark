@@ -32,7 +32,7 @@ class MarosMeszarosRunner(object):
             f.endswith('.mat')]
         self.problems = [f[:-4] for f in lst_probs]   # List of problem names
 
-    def solve(self, parallel=True, cores=32,n_average=0):
+    def solve(self, parallel=True, cores=32,n_average=0,eps=1.E-9):
         '''
         Solve problems of type example
 
@@ -90,10 +90,16 @@ class MarosMeszarosRunner(object):
                         full_name = os.path.join(".", "problem_classes",
                                  PROBLEMS_FOLDER, problem)
                         instance = MarosMeszaros(full_name)
-                        if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000 and (problem in ["QCAPRI"]) ):#and not(problem in ["PRIMALC2","PRIMALC8","PRIMALC5","QSCAGR25","PRIMALC1","QSCFXM1","QSCTAP1","QGROW15","QSCAGR7","QSHARE2B"])):
-                            results.append(self.solve_single_example(problem,
+                        if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000 ):#and (problem in ["QCAPRI"]) ):#and not(problem in ["PRIMALC2","PRIMALC8","PRIMALC5","QSCAGR25","PRIMALC1","QSCFXM1","QSCTAP1","QGROW15","QSCAGR7","QSHARE2B"])):
+                            if (solver=="OSQP"):
+                                if (not(problem in ["PRIMALC2","PRIMALC8","PRIMALC5","QSCAGR25","PRIMALC1","QSCFXM1","QSCTAP1","QGROW15","QSCAGR7","QSHARE2B"]) ):
+                                    results.append(self.solve_single_example(problem,
                                                                  solver,
-                                                                 settings,n_average))
+                                                                 settings,n_average,eps))
+                            else:
+                                results.append(self.solve_single_example(problem,
+                                                                 solver,
+                                                                 settings,n_average,eps))
                 # Create dataframe
                 df = pd.concat(results)
 
@@ -113,7 +119,7 @@ class MarosMeszarosRunner(object):
 
     def solve_single_example(self,
                              problem,
-                             solver, settings,n_average):
+                             solver, settings,n_average,eps):
         '''
         Solve Maros Meszaro 'problem' with 'solver'
 
@@ -137,9 +143,9 @@ class MarosMeszarosRunner(object):
         # Solve problem
 
         s = SOLVER_MAP[solver](settings)
-        print(" - Solving %s with solver %s P.nnz %s A.nnz %s" % (problem, solver, P.nnz, A.nnz))  
+        print(" - Solving %s with solver %s P.nnz %s A.nnz %s eps %s" % (problem, solver, P.nnz, A.nnz,eps))  
 
-        results = s.solve(instance,n_average)
+        results = s.solve(instance,n_average,eps)
 
         # Add constant part to objective value
         # NB. This is needed to match the objective in the original
@@ -169,7 +175,8 @@ class MarosMeszarosRunner(object):
                          #  'obj_dist': [obj_dist],
                          'n': [instance.qp_problem["n"]],
                          'm': [instance.qp_problem["m"]],
-                         'N': [N]}
+                         'N': [N],
+                         'eps' : [eps]}
 
         # Add status polish if OSQP
         if solver[:4] == 'OSQP'and False:

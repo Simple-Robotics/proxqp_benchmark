@@ -72,20 +72,13 @@ def gen_int_log_space(min_val, limit, n):
                     dtype=int)
 
 
-def is_qp_solution_optimal(qp_problem, x, y, high_accuracy=False):
+def is_qp_solution_optimal(qp_problem, x, y, eps):
     '''
     Check optimality condition of the QP given the
     primal-dual solution (x, y) and the tolerance eps
     '''
-    if high_accuracy:
-        eps_abs = s.eps_high
-        eps_rel = 0
-        #eps_rel = s.eps_high
-    else:
-        eps_abs=s.eps_low
-        eps_rel = 0
-        #eps_rel=s.eps_low
-
+    eps_abs = eps 
+    eps_rel = 0
     # Get problem matrices
     P = qp_problem['P']
     q = qp_problem['q']

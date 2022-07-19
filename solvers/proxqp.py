@@ -1,4 +1,5 @@
-import proxsuite 
+#import proxsuite 
+import proxsuite_pywrap as proxsuite
 import numpy as np
 from . import statuses as s
 from .results import Results
@@ -40,7 +41,7 @@ class PROXQPSolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example,n_average):
+    def solve(self, example, n_average, eps):
         '''
         Solve problem
 
@@ -77,7 +78,19 @@ class PROXQPSolver(object):
         n_eq = A.shape[0]
         n_in = C.shape[0]
 
-        Qp = proxsuite.qp.dense.QP(n,n_eq,n_in)
+        if (self._settings['dense']):
+            Qp = proxsuite.qp.dense.QP(n,n_eq,n_in)
+            if (self._settings['bcl_update']):
+                Qp.settings.bcl_update= True
+            else:
+                Qp.settings.bcl_update= False
+        else:
+            #Qp = proxsuite.qp.sparse.QP(n,n_eq,n_in)
+            H_ = H!=0.
+            A_ = A!=0.
+            C_ = C!=0.
+            Qp = proxsuite.qp.sparse.QP(H_,A_,C_)
+            
         Qp.settings.eps_abs = self._settings['eps_abs']
         Qp.settings.eps_rel = self._settings['eps_rel']
         Qp.settings.verbose = self._settings['verbose'] 
@@ -92,13 +105,12 @@ class PROXQPSolver(object):
                 np.asfortranarray(u),
                 np.asfortranarray(l)
         )
-
         run_time = 0
         n_solving = n_average
         for i in range(n_solving):
             Qp.solve()
             run_time += Qp.results.info.solve_time + Qp.results.info.setup_time
-            Qp.update()
+            #Qp.update(update_preconditioner = True)
         Qp.solve()
         run_time += Qp.results.info.solve_time + Qp.results.info.setup_time
         n_solving += 1
@@ -119,8 +131,7 @@ class PROXQPSolver(object):
         y[eq_ids] = Qp.results.y
         y[in_ids] = Qp.results.z
 
-        if not is_qp_solution_optimal(problem, x, y,
-                                        high_accuracy=self._settings.get('high_accuracy')):
+        if not is_qp_solution_optimal(problem, x, y, eps):
             status = s.SOLVER_ERROR
         # Verify solver time
             if 'time_limit' in self._settings:

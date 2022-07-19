@@ -31,6 +31,7 @@ class Example(object):
     '''
     def __init__(self, name,
                  dims,
+                 accuracies,
                  solvers,
                  settings,
                  output_folder,
@@ -40,6 +41,7 @@ class Example(object):
         self.dims = dims
         self.n_instances = n_instances
         self.n_average = n_average
+        self.accuracies = accuracies
         self.solvers = solvers
         self.settings = settings
         self.output_folder = output_folder
@@ -71,9 +73,8 @@ class Example(object):
 
         # Iterate over all solvers
         for solver in self.solvers:
-            print("solver : {} ; solvers:{}".format(solver,self.solvers))
+            
             settings = self.settings[solver]
-
             # Initialize solver results
             results_solver = []
 
@@ -89,75 +90,87 @@ class Example(object):
             # Get solver file name
             solver_file_name = os.path.join(path, 'full.csv')
 
-            for n in self.dims:
+            for eps in self.accuracies:
+                if solver in ['PROXQP',"PROXQP_sparse","OSQP"]:
+                    settings['eps_abs'] = eps
+                elif solver == "MOSEK":
+                    settings["MSK_DPAR_INTPNT_CO_TOL_PFEAS"] = eps 
+                    settings["MSK_DPAR_INTPNT_CO_TOL_DFEAS"] = eps 
+                elif solver == "GUROBI":
+                    settings["FeasibilityTol"] = eps 
+                    settings["OptimalityTol"] = eps 
 
-                # Check if solution already exists
-                n_file_name = os.path.join(path, 'n%i.csv' % n)
+                print("solver : {} ; solvers:{} ; accuracy : {}".format(solver,self.solvers,eps))
+                for n in self.dims:
 
-                if not os.path.isfile(n_file_name):
+                    # Check if solution already exists
+                    n_file_name = os.path.join(path, 'n%i.csv' % n)
+                    #n_file_name = os.path.join(path, 'eps%s.csv' % eps)
 
-                    if parallel and solver not in ['qpOASES']:
-                        # NB. ECOS and qpOASES crahs if the problem sizes are too large
-                        instances_list = list(range(self.n_instances))
-                        n_results = pool.starmap(self.solve_single_example,
-                                                 zip(repeat(n),
-                                                     instances_list,
-                                                     repeat(solver),
-                                                     repeat(settings)))
-                    else:
-                        n_results = []
-                        for instance in range(self.n_instances):
-                            if solver in ['qpOASES',"MOSEK","quadprog"]:
-                                # there is no reset function to reset the workspace while keeping it in memory
-                                run_time = 0
-                                n_solving = n_average
-                                #n_solving = 0
-                                for i in range(n_solving):
-                                    res = self.solve_single_example(n,
-                                                          instance,
-                                                          solver,
-                                                          settings
-                                                          
-                                                          )
-                                    run_time+=res.run_time
-                                    
-                                res = self.solve_single_example(n,
-                                                          instance,
-                                                          solver,
-                                                          settings
-                                                          
-                                                          )
-                                run_time += res.run_time
-                                n_solving+=1
-                                run_time/= n_solving
-                                res.run_time = run_time
-                                n_results.append(
-                                    res
-                                )
-                            else:
-                                n_results.append(
-                                    self.solve_single_example(n,
+                    if not os.path.isfile(n_file_name):
+
+                        if parallel and solver not in ['qpOASES']:
+                            # NB. ECOS and qpOASES crahs if the problem sizes are too large
+                            instances_list = list(range(self.n_instances))
+                            n_results = pool.starmap(self.solve_single_example,
+                                                    zip(repeat(n),
+                                                        instances_list,
+                                                        repeat(solver),
+                                                        repeat(settings),repeat(eps)))
+                        else:
+                            n_results = []
+                            for instance in range(self.n_instances):
+                                if solver in ['qpOASES',"MOSEK","quadprog"]:
+                                    # there is no reset function to reset the workspace while keeping it in memory
+                                    run_time = 0
+                                    n_solving = n_average
+                                    #n_solving = 0
+                                    for i in range(n_solving):
+                                        res = self.solve_single_example(n,
                                                             instance,
                                                             solver,
-                                                            settings
-                                                            
+                                                            settings,
+                                                            eps
                                                             )
-                                )
-                                
+                                        run_time+=res.run_time
+                                        
+                                    res = self.solve_single_example(n,
+                                                            instance,
+                                                            solver,
+                                                            settings,
+                                                            eps
+                                                            )
+                                    run_time += res.run_time
+                                    n_solving+=1
+                                    run_time/= n_solving
+                                    res.run_time = run_time
+                                    n_results.append(
+                                        res
+                                    )
+                                else:
+                                    n_results.append(
+                                        self.solve_single_example(n,
+                                                                instance,
+                                                                solver,
+                                                                settings,
+                                                                eps
+                                                                )
+                                    )
                                     
+                                        
 
-                    # Combine n_results
-                    df = pd.concat(n_results)
+                        # Combine n_results
+                        df = pd.concat(n_results)
 
-                    # Store n_results
-                    df.to_csv(n_file_name, index=False)
+                        # Store n_results
+                        df.to_csv(n_file_name, index=False)
 
-                else:
-                    # Load from file
-                    df = pd.read_csv(n_file_name)
+                    else:
+                        # Load from file
+                        df = pd.read_csv(n_file_name)
 
-                # Combine list of dataframes
-                results_solver.append(df)
+                    # Combine list of dataframes
+                    results_solver.append(df)
 
             # Create total dataframe for the solver from list
             df_solver = pd.concat(results_solver)
@@ -171,7 +184,7 @@ class Example(object):
 
     def solve_single_example(self,
                              dimension, instance_number,
-                             solver, settings):
+                             solver, settings,eps):
         '''
         Solve 'example' with 'solver'
 
@@ -187,12 +200,12 @@ class Example(object):
         example_instance = EXAMPLES_MAP[self.name](dimension,
                                                    instance_number)
 
-        print(" - Solving %s with n = %i, instance = %i with solver %s" %
-              (self.name, dimension, instance_number, solver))
+        print(" - Solving %s with n = %i, instance = %i with solver %s with accuracy %s" %
+              (self.name, dimension, instance_number, solver, eps))
 
         # Solve problem
         s = SOLVER_MAP[solver](settings)
-        results = s.solve(example_instance,self.n_average)
+        results = s.solve(example_instance,self.n_average,eps)
 
         # Create solution as pandas table
         P = example_instance.qp_problem['P']
@@ -205,7 +218,8 @@ class Example(object):
                          'iter': [results.niter],
                          'obj_val': [results.obj_val],
                          'n': [dimension],
-                         'N': [N]}
+                         'N': [N],
+                         'eps': [eps]}
 
         # Add status polish if OSQP
         if solver[:4] == 'OSQP' and False:

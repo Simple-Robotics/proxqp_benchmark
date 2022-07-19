@@ -40,7 +40,7 @@ class QUADPROGSolver(object):
         return self._settings
 
 
-    def solve(self, example,n_average):
+    def solve(self, example,n_average,eps):
         """
         Solve a Quadratic Program defined as:
         .. math::
@@ -158,8 +158,7 @@ class QUADPROGSolver(object):
             if (meq==0 and n_in>0):
                 y_sol[in_ids] = -y[meq+n_in:meq+2*n_in] + y[meq:meq+n_in]
 
-            if not is_qp_solution_optimal(problem, x, y_sol,
-                                            high_accuracy=self._settings.get('high_accuracy')):
+            if not is_qp_solution_optimal(problem, x, y_sol, eps):
                 status = s.SOLVER_ERROR
             # Verify solver time
                 if 'time_limit' in self._settings:

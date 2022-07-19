@@ -18,7 +18,7 @@ import argparse
 parser = argparse.ArgumentParser(description='Maros Meszaros Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,
                     action='store_true')
-parser.add_argument('--verbose', help='Verbose solvers', default=True,
+parser.add_argument('--verbose', help='Verbose solvers', default=False,
                     action='store_true')
 parser.add_argument('--parallel', help='Parallel solution', default=False,
                     action='store_true')
@@ -31,10 +31,9 @@ print('high_accuracy', high_accuracy)
 print('verbose', verbose)
 print('parallel', parallel)
 
-# Add high accuracy solvers when accurazy
-print("s.OSQP_ACC : {}".format(s.OSQP_ACC))
+# Add high accuracy solvers when accuracy
 if high_accuracy:
-    solvers = [s.PROXQP,s.OSQP,s.qpOASES,s.GUROBI,s.quadprog,s.MOSEK]
+    solvers = [s.PROXQP,s.PROXQP_Martinez]#[s.PROXQP_sparse,s.PROXQP,s.OSQP,s.qpOASES,s.GUROBI,s.quadprog,s.MOSEK] #,s.quadprog,s.OSQP,s.PROXQP_sparse,s.MOSEK,s.qpOASES,
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -52,8 +51,8 @@ if verbose:
 maros_meszaros_runner = MarosMeszarosRunner(solvers,
                                             s.settings,
                                             OUTPUT_FOLDER)
-
-maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=1)
+eps = 1.E-9
+maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=1,eps=eps)
 
 # Compute results statistics
 compute_stats_info(solvers, OUTPUT_FOLDER,

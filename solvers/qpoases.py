@@ -28,7 +28,7 @@ class qpOASESSolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example,n_average):
+    def solve(self, example,n_average,eps):
         '''
         Solve problem
 
@@ -155,7 +155,7 @@ class qpOASESSolver(object):
 
                 y = np.concatenate((y, y_bounds))
 
-            if not is_qp_solution_optimal(p, x, y, self._settings.get('high_accuracy')):
+            if not is_qp_solution_optimal(p, x, y, eps):
                 status = s.SOLVER_ERROR
 
             return Results(status, obj_val,
