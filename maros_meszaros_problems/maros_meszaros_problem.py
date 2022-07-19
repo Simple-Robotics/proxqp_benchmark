@@ -90,14 +90,16 @@ class MarosMeszarosRunner(object):
                         full_name = os.path.join(".", "problem_classes",
                                  PROBLEMS_FOLDER, problem)
                         instance = MarosMeszaros(full_name)
-                        if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000 ):#and (problem in ["QCAPRI"]) ):#and not(problem in ["PRIMALC2","PRIMALC8","PRIMALC5","QSCAGR25","PRIMALC1","QSCFXM1","QSCTAP1","QGROW15","QSCAGR7","QSHARE2B"])):
+                        if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000 ): # to get a subset wchich dimension is bounded by 1000
+                            ''' these problem below are super slow to solve with OSQP at accuracy 1.E-9, it saturates without solving them
                             if (solver=="OSQP"):
                                 if (not(problem in ["PRIMALC2","PRIMALC8","PRIMALC5","QSCAGR25","PRIMALC1","QSCFXM1","QSCTAP1","QGROW15","QSCAGR7","QSHARE2B"]) ):
                                     results.append(self.solve_single_example(problem,
                                                                  solver,
                                                                  settings,n_average,eps))
                             else:
-                                results.append(self.solve_single_example(problem,
+                            '''
+                            results.append(self.solve_single_example(problem,
                                                                  solver,
                                                                  settings,n_average,eps))
                 # Create dataframe
@@ -177,14 +179,6 @@ class MarosMeszarosRunner(object):
                          'm': [instance.qp_problem["m"]],
                          'N': [N],
                          'eps' : [eps]}
-
-        # Add status polish if OSQP
-        if solver[:4] == 'OSQP'and False:
-            solution_dict['status_polish'] = results.status_polish
-            solution_dict['setup_time'] = results.setup_time
-            solution_dict['solve_time'] = results.solve_time
-            solution_dict['update_time'] = results.update_time
-            solution_dict['rho_updates'] = results.rho_updates
 
         print(" - Solved %s with solver %s" % (problem, solver))
 

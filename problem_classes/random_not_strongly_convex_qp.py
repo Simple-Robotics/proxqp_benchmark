@@ -7,7 +7,7 @@ class RandomNotStronglyConvexQPExample(object):
     '''
     Random Mixed QP example
     '''
-    def __init__(self, n,seed=1):
+    def __init__(self, n, sparsity = 0.15, seed=1):
         '''
         Generate problem in QP format and CVXPY format
         '''
@@ -19,23 +19,7 @@ class RandomNotStronglyConvexQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        '''
-        if (n<=100):
-            P = spa.random(n, n, density=0.025,
-                        data_rvs=np.random.randn,
-                        format='csc')
-        elif (n>100 and n<=400):
-            P = spa.random(n, n, density=0.015,
-                        data_rvs=np.random.randn,
-                        format='csc')
-        else:
-            P = spa.random(n, n, density=0.0125,
-                        data_rvs=np.random.randn,
-                        format='csc')
-        self.P = P.dot(P.T).tocsc()
-
-        '''
-        P = spa.random(n, n, density=0.075,
+        P = spa.random(n, n, density=sparsity/2,
                        data_rvs=np.random.randn,
                        format='csc').toarray()
         P = (P+P.T)/2.         
@@ -46,28 +30,10 @@ class RandomNotStronglyConvexQPExample(object):
             self.P = spa.coo_matrix(P) # already not strictly convex
         else:
             self.P = spa.coo_matrix(P) - abs(s) * spa.eye(n)
-        '''
-        P = spa.random(n, n, density=0.025,
-                       data_rvs=np.random.randn,
-                       format='csc').toarray()
-        P = (P+P.T)/2. 
-
-        
-        U,S,Ut = np.linalg.svd(P, full_matrices=True,hermitian=True)
-        S = np.maximum(S,0.) # to ensure the matrix is psd and not pd
-        
-        P = U.dot(np.diag(S).dot(U.T))
-        print("S : {}".format(S))
-        P = (P+P.T)/2. 
-        '''
-        #self.P = spa.coo_matrix(P)
-
-        self.A = spa.random(m, n, density=0.15,
+        self.A = spa.random(m, n, density=sparsity,
                             data_rvs=np.random.randn,
                             format='csc')
-        #print("min(np.linalg.eigvals(P)) : {}".format(min(np.linalg.eigvals((self.P).toarray()))))
         print("sparsity of P : {}".format((self.P.nnz)/(n**2)))
-        #input()
         v = np.random.randn(n)   # Fictitious solution
         delta = np.random.rand(m)  # To get inequality
 

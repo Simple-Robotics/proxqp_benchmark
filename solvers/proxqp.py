@@ -59,10 +59,8 @@ class PROXQPSolver(object):
 
         eq_ids = lb == ub
         in_ids = lb != ub
-
         PlusInfId = ub == math.inf 
         NegInfId = lb == -math.inf 
-
         ub[PlusInfId] = 1.e20
         lb[NegInfId] = -1.e20
 
@@ -80,16 +78,8 @@ class PROXQPSolver(object):
 
         if (self._settings['dense']):
             Qp = proxsuite.qp.dense.QP(n,n_eq,n_in)
-            if (self._settings['bcl_update']):
-                Qp.settings.bcl_update= True
-            else:
-                Qp.settings.bcl_update= False
         else:
-            #Qp = proxsuite.qp.sparse.QP(n,n_eq,n_in)
-            H_ = H!=0.
-            A_ = A!=0.
-            C_ = C!=0.
-            Qp = proxsuite.qp.sparse.QP(H_,A_,C_)
+            Qp = proxsuite.qp.sparse.QP(n,n_eq,n_in)
             
         Qp.settings.eps_abs = self._settings['eps_abs']
         Qp.settings.eps_rel = self._settings['eps_rel']
@@ -105,18 +95,10 @@ class PROXQPSolver(object):
                 np.asfortranarray(u),
                 np.asfortranarray(l)
         )
-        run_time = 0
-        n_solving = n_average
-        for i in range(n_solving):
-            Qp.solve()
-            run_time += Qp.results.info.solve_time + Qp.results.info.setup_time
-            #Qp.update(update_preconditioner = True)
         Qp.solve()
-        run_time += Qp.results.info.solve_time + Qp.results.info.setup_time
-        n_solving += 1
-    
+        run_time = Qp.results.info.solve_time + Qp.results.info.setup_time
         # duration time
-        run_time /= (1.e6 * n_solving) # the run_time is measured in microseconds 
+        run_time /= 1.e6 # the run_time is measured in microseconds 
 
         # Obj val
         objval = Qp.results.info.objValue

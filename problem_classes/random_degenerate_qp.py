@@ -7,7 +7,7 @@ class RandomDegenerateQPExample(object):
     '''
     Random Degenerate QP example
     '''
-    def __init__(self, n,seed=1):
+    def __init__(self, n, sparsity= 0.15,seed=1):
         '''
         Generate problem in QP format and CVXPY format
         '''
@@ -21,13 +21,7 @@ class RandomDegenerateQPExample(object):
         # Generate problem data
         self.n = int(n)
         self.m = m
-        '''
-        P = spa.random(n, n, density=0.0125,
-                       data_rvs=np.random.randn,
-                       format='csc')
-        self.P = P.dot(P.T).tocsc() + 1e-2 * spa.eye(n)
-        '''
-        P = spa.random(n, n, density=0.075,
+        P = spa.random(n, n, density=sparsity/2,
                        data_rvs=np.random.randn,
                        format='csc').toarray()
         P = (P+P.T)/2.         
@@ -36,7 +30,7 @@ class RandomDegenerateQPExample(object):
         self.P = spa.coo_matrix(P) + (abs(s)+1e-02) * spa.eye(n)
 
         self.q = np.random.randn(n)
-        C = spa.random(n_in, n, density=0.15,
+        C = spa.random(n_in, n, density=sparsity,
                             data_rvs=np.random.randn,
                             format='csc')
         # make sure the matrix rank deficient
@@ -48,7 +42,7 @@ class RandomDegenerateQPExample(object):
         sol = self.A@v
 
         self.u = sol + delta
-        self.l =  - np.inf * np.ones(m) 
+        self.l =  - 1.E20 * np.ones(m) 
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()

@@ -45,25 +45,8 @@ class OSQPSolver(object):
                 **settings)
 
         # Solve
-        
-        run_time = 0
-        n_solving = n_average
-        for i in range(n_solving):
-
-            results = m.solve()
-            run_time += results.info.run_time+ results.info.setup_time
-            m = osqp.OSQP()
-            m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
-                problem['u'],
-                **settings)
-
-
         results = m.solve()
-        run_time += results.info.run_time + results.info.setup_time
-        n_solving +=1
-        run_time /= n_solving
-
-
+        run_time = results.info.run_time + results.info.setup_time
 
         status = self.STATUS_MAP.get(results.info.status_val, s.SOLVER_ERROR)
 

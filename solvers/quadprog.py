@@ -129,7 +129,7 @@ class QUADPROGSolver(object):
                 qp_C = -vstack([A,C, -C]).T
                 qp_b = -hstack([b, u, -l])
             else:
-                qp_C = A.T # Not working --> dual always false
+                qp_C = A.T
                 qp_b = b
             meq = A.shape[0]
         else:  # no equality constraint

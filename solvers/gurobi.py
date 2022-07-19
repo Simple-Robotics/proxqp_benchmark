@@ -137,44 +137,6 @@ class GUROBISolver(object):
                     and (param != "high_accuracy"):
                 model.setParam(param, value)
 
-        run_time = 0
-        # Update model
-        tic = time.time()
-        model.update()
-        toc = time.time()
-        run_time += toc-tic
-        # Solve problem
-        n_solving = n_average
-        for i in range(n_solving):
-
-            try:
-                tic= time.time()
-                model.optimize()
-                toc= time.time()
-                
-            except:  # Error in the solution
-                if self._settings['verbose']:
-                    print("Error in GUROBI solution\n")
-                run_time = toc-tic#model.Runtime
-                return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
-
-            run_time += toc-tic#model.Runtime
-            model.reset(0)
-
-        try:
-                tic = time.time()
-                model.optimize()
-                toc = time.time()
-        except:  # Error in the solution
-                if self._settings['verbose']:
-                    print("Error in GUROBI solution\n")
-                run_time = toc-tic#model.Runtime
-                return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
-        run_time += toc-tic#model.Runtime
-        n_solving +=1
-        run_time /= n_solving
-
-        '''
         try:
             model.optimize()
         except:  # Error in the solution
@@ -182,7 +144,7 @@ class GUROBISolver(object):
                 print("Error in GUROBI solution\n")
             run_time = model.Runtime
             return Results(s.SOLVER_ERROR, None, None, None, run_time, None)
-        '''
+        
 
         # Get status
         status = self.STATUS_MAP.get(model.Status, s.SOLVER_ERROR)

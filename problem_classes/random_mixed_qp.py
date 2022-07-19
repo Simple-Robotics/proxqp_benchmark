@@ -9,22 +9,20 @@ class RandomMixedQPExample(object):
     '''
     Random Mixed QP example
     '''
-    def __init__(self, n,seed=1):
+    def __init__(self, n, sparsity = 0.15,seed=1):
         '''
         Generate problem in QP format and CVXPY format
         '''
         np.random.seed(seed)
 
-        m = n#int(n/4) + int(n/4)
-        #m  = n 
-        n_eq = 0#int(n/4)
-        n_in = n#int(n/4)
-
+        n_eq = int(n/4)
+        n_in = int(n/4)
+        m = n_eq+n_in
         # Generate problem data
         self.n = int(n)
         self.m = m
         
-        P = spa.random(n, n, density=0.25,
+        P = spa.random(n, n, density=sparsity/2,
                        data_rvs=np.random.randn,
                        format='csc').toarray()
         P = (P+P.T)/2.  
@@ -33,16 +31,14 @@ class RandomMixedQPExample(object):
         self.P = spa.coo_matrix(P) + (abs(s)+1e-02) * spa.eye(n) # to be sure being strictly convex
         print("sparsity of P : {}".format((self.P.nnz)/(n**2)))
         self.q = np.random.randn(n)
-        self.A = spa.random(m, n, density=0.5,data_rvs=np.random.randn,format='csc')
+        self.A = spa.random(m, n, density=sparsity,data_rvs=np.random.randn,format='csc')
         v = np.random.randn(n)   # Fictitious solution
         delta = np.random.rand(m)  # To get inequality
         self.u = self.A@v 
 
-        #self.l = (- np.inf * np.ones(m)) 
-        #self.l[:n_eq] = self.u[:n_eq]
-        self.l = self.u 
+        self.l = (- 1.E20 * np.ones(m)) 
+        self.l[:n_eq] = self.u[:n_eq]
         self.u[n_eq:] += delta[n_eq:]
-        self.l[n_eq:] -= delta[n_eq:]
         
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()

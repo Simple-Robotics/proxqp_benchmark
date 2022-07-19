@@ -2,7 +2,7 @@
 Run all benchmarks for the PROXQP paper
 
 This code tests the solvers:
-    - PROXQP
+    - PROXQP (with dense backend)
     - OSQP
     - GUROBI
     - MOSEK
@@ -37,7 +37,7 @@ print('parallel', parallel)
 
 # Add high accuracy solvers when accuracy
 if high_accuracy:
-    solvers =  [s.OSQP,s.PROXQP_sparse,s.PROXQP]#[s.MOSEK,s.qpOASES,s.GUROBI,s.quadprog,s.OSQP,s.PROXQP_sparse,s.PROXQP]#[s.MOSEK,s.qpOASES,s.GUROBI,s.quadprog,s.OSQP,s.PROXQP]
+    solvers =  [s.MOSEK,s.qpOASES,s.GUROBI,s.quadprog,s.OSQP,s.PROXQP]
     OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -54,7 +54,6 @@ n_instances = 5
 n_dim = 10
 n_average = 10
 sparsity = 0.15
-#psilon = 1.E-9
 
 # Run benchmark problems
 problems = [
@@ -64,7 +63,7 @@ problems = [
             ]
 
 problem_dimensions = {
-                      'Random Mixed QP': gen_int_log_space(10, 900, n_dim),#gen_int_log_space(10, 5000, 20),
+                      'Random Mixed QP': gen_int_log_space(10, 1000, n_dim),
                       'Random Degenerate QP': gen_int_log_space(10, 1000, n_dim),
                       'Random Not Strongly Convex QP': gen_int_log_space(10, 1000, n_dim)
                       }
@@ -88,7 +87,8 @@ for problem in problems:
                         s.settings,
                         OUTPUT_FOLDER,
                         n_instances,
-                        n_average
+                        n_average,
+                        sparsity
                         )
         example.solve(parallel=problem_parallel[problem])
 
