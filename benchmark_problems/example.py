@@ -4,7 +4,6 @@ from itertools import repeat
 import pandas as pd
 
 from solvers.solvers import SOLVER_MAP
-from problem_classes.random_qp import RandomQPExample
 from problem_classes.random_mixed_qp import RandomMixedQPExample
 from problem_classes.random_degenerate_qp import RandomDegenerateQPExample
 from problem_classes.random_not_strongly_convex_qp import RandomNotStronglyConvexQPExample
@@ -17,7 +16,6 @@ examples = [
             RandomMixedQPExample,
             RandomDegenerateQPExample,
             RandomNotStronglyConvexQPExample,
-            RandomQPExample,
             EqQPExample
             ]
 
@@ -36,9 +34,11 @@ class Example(object):
                  settings,
                  output_folder,
                  n_instances=10,
-                 n_average=10):
+                 n_average=10,
+                 sparsity=0.15):
         self.name = name
         self.dims = dims
+        self.sparsity = sparsity
         self.n_instances = n_instances
         self.n_average = n_average
         self.accuracies = accuracies
@@ -93,12 +93,13 @@ class Example(object):
             for eps in self.accuracies:
                 if solver in ['PROXQP',"PROXQP_sparse","OSQP"]:
                     settings['eps_abs'] = eps
+                    settings['eps_rel'] = 0
                 elif solver == "MOSEK":
-                    settings["MSK_DPAR_INTPNT_CO_TOL_PFEAS"] = eps 
-                    settings["MSK_DPAR_INTPNT_CO_TOL_DFEAS"] = eps 
+                    settings["MSK_DPAR_INTPNT_CO_TOL_PFEAS"] = eps # cannot be put to 0..
+                    settings["MSK_DPAR_INTPNT_CO_TOL_DFEAS"] = eps # cannot be put to 0..
                 elif solver == "GUROBI":
-                    settings["FeasibilityTol"] = eps 
-                    settings["OptimalityTol"] = eps 
+                    settings["FeasibilityTol"] = eps # cannot be put to 0..
+                    settings["OptimalityTol"] = eps # cannot be put to 0..
 
                 print("solver : {} ; solvers:{} ; accuracy : {}".format(solver,self.solvers,eps))
                 for n in self.dims:
@@ -113,20 +114,19 @@ class Example(object):
                             # NB. ECOS and qpOASES crahs if the problem sizes are too large
                             instances_list = list(range(self.n_instances))
                             n_results = pool.starmap(self.solve_single_example,
-                                                    zip(repeat(n),
+                                                    zip(repeat(n),repeat(self.sparsity),
                                                         instances_list,
                                                         repeat(solver),
                                                         repeat(settings),repeat(eps)))
                         else:
                             n_results = []
                             for instance in range(self.n_instances):
-                                if solver in ['qpOASES',"MOSEK","quadprog"]:
-                                    # there is no reset function to reset the workspace while keeping it in memory
+                                    # solve n_solving times the same problem for having a good average of the solving time
                                     run_time = 0
                                     n_solving = n_average
                                     #n_solving = 0
-                                    for i in range(n_solving):
-                                        res = self.solve_single_example(n,
+                                    for i in range(n_solving-1):
+                                        res = self.solve_single_example(n,self.sparsity,
                                                             instance,
                                                             solver,
                                                             settings,
@@ -134,30 +134,18 @@ class Example(object):
                                                             )
                                         run_time+=res.run_time
                                         
-                                    res = self.solve_single_example(n,
+                                    res = self.solve_single_example(n,self.sparsity,
                                                             instance,
                                                             solver,
                                                             settings,
                                                             eps
                                                             )
                                     run_time += res.run_time
-                                    n_solving+=1
                                     run_time/= n_solving
                                     res.run_time = run_time
                                     n_results.append(
                                         res
-                                    )
-                                else:
-                                    n_results.append(
-                                        self.solve_single_example(n,
-                                                                instance,
-                                                                solver,
-                                                                settings,
-                                                                eps
-                                                                )
-                                    )
-                                    
-                                        
+                                    )   
 
                         # Combine n_results
                         df = pd.concat(n_results)
@@ -183,7 +171,7 @@ class Example(object):
             pool.join()   # Wait for all processes to finish
 
     def solve_single_example(self,
-                             dimension, instance_number,
+                             dimension,sparsity, instance_number,
                              solver, settings,eps):
         '''
         Solve 'example' with 'solver'
@@ -197,7 +185,7 @@ class Example(object):
         '''
 
         # Create example instance
-        example_instance = EXAMPLES_MAP[self.name](dimension,
+        example_instance = EXAMPLES_MAP[self.name](dimension,sparsity,
                                                    instance_number)
 
         print(" - Solving %s with n = %i, instance = %i with solver %s with accuracy %s" %
@@ -220,14 +208,6 @@ class Example(object):
                          'n': [dimension],
                          'N': [N],
                          'eps': [eps]}
-
-        # Add status polish if OSQP
-        if solver[:4] == 'OSQP' and False:
-            solution_dict['status_polish'] = results.status_polish
-            solution_dict['setup_time'] = results.setup_time
-            solution_dict['solve_time'] = results.solve_time
-            solution_dict['update_time'] = results.update_time
-            solution_dict['rho_updates'] = results.rho_updates
 
         # Return solution
         return pd.DataFrame(solution_dict)
