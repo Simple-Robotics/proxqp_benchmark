@@ -33,7 +33,7 @@ print('parallel', parallel)
 
 # Add high accuracy solvers when accuracy
 if high_accuracy:
-    solvers = [s.PROXQP,s.PROXQP_Martinez]#[s.PROXQP_sparse,s.PROXQP,s.OSQP,s.qpOASES,s.GUROBI,s.quadprog,s.MOSEK] #,s.quadprog,s.OSQP,s.PROXQP_sparse,s.MOSEK,s.qpOASES,
+    solvers = [s.PROXQP,s.OSQP,s.qpOASES,s.GUROBI,s.quadprog,s.MOSEK]
     OUTPUT_FOLDER = 'maros_meszaros_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True

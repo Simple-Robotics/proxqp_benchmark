@@ -44,7 +44,7 @@ settings = {
     },
     OSQP: {'eps_abs': eps_high,
            'eps_rel': 0.,
-           'polish': True,
+           'polish': False, # true polish slows down OSQP
            'max_iter': int(1e09),
            'eps_prim_inf': 1e-15,  # Disable infeas check
            'eps_dual_inf': 1e-15,

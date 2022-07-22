@@ -54,13 +54,26 @@ python run_benchmark_problems.py
 
 ### Results
 
-For standard Quadratic Programs with inequality and equality constraints, when asking for a high accuracy (e.g., 1.E-9), the resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
+For Convex Quadratic Programs with inequality and equality constraints, when asking for a high accuracy (e.g., 1.E-9), the resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are, for `sparse` problems (i.e., a ratio of sparsity of around 15%)
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
 |        |                   |                 |                    |                    |                    |
 
-At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
+and for dense problems
+
+| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
+| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
+|        |                   |                 |                    |                    |                    |
+
+
+At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are, for `sparser` problems
+
+| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
+| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
+|        |                   |                 |                    |                    |                    |
+
+and for dense problems
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |

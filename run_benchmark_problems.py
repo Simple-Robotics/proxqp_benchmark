@@ -13,8 +13,7 @@ This code tests the solvers:
 from benchmark_problems.example import Example
 import solvers.solvers as s
 from utils.general import gen_int_log_space
-from utils.benchmark import compute_stats_info,plot_performance_profiles,compute_time_series_plot,compute_time_series_plot_for_different_accuracies
-import os
+from utils.benchmark import compute_stats_info,compute_time_series_plot
 import argparse
 import proxsuite_pywrap as proxsuite
 
@@ -53,12 +52,13 @@ n_instances = 5
 n_dim = 10
 n_average = 10
 sparsity = 0.15
+accuracies = [1.e-9]
 
 # Run benchmark problems
 problems = [
-            #'Random Degenerate QP',
-            #'Random Not Strongly Convex QP'
             'Random Mixed QP'
+            #'Random Not Strongly Convex QP',
+            #'Random Degenerate QP'
             ]
 
 problem_dimensions = {
@@ -75,8 +75,6 @@ problem_parallel = {
                     'Random Not Strongly Convex QP': parallel
                     }
 
-#accuracies = [1.e-2,1.e-3,1.e-4,1.e-5,1.e-6,1.e-7,1.e-8,1.e-9]
-accuracies = [1.e-9]
 # Run all examples
 for problem in problems:
         example = Example(problem,
@@ -102,4 +100,3 @@ compute_stats_info(solvers, OUTPUT_FOLDER,
 suffix = ''
 for problem in problems:
     compute_time_series_plot(solvers, problem, suffix)
-    #compute_time_series_plot_for_different_accuracies(solvers, problem, suffix)
