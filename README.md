@@ -2,7 +2,7 @@
 
 These are the scripts to compare the following Quadratic Program (QP) solvers
 
--   PROXQP
+-   PROXQP (with dense backend)
 -   OSQP
 -   GUROBI
 -   MOSEK
@@ -25,14 +25,14 @@ conda install -c mosek mosek
 conda install -c conda-forge osqp
 conda install -c omnia quadprog
 ```
-Gurobi and Mosek requires a license for working. Note that you are an academic, they provide specific and temporary free licenses.
+Gurobi and Mosek require a license for working. Note that if you are an academic, they provide specific and temporary free licenses.
 
 Finally, for installing qpOASES, you should look at their [install file](https://github.com/coin-or/qpOASES/blob/master/INSTALL.txt) in their github repository.
 
 All the scripts come with options (default to `False`)
 
 - `--parallel` for parallel execution across instances
-- `--verbose` for verbose solvers output (they  can be slower than necessary while printing)
+- `--verbose` for verbose solvers output (they can be slower than necessary while printing)
 - `--high_accuracy` for high accuracy `eps=1e-09` solver settings + optimality checks
 
 Note that the parallel option has not be tested for the paper benchmarks.
@@ -53,15 +53,23 @@ python run_benchmark_problems.py
 ```
 
 ### Results
-The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
+
+For standard Quadratic Programs with inequality and equality constraints, when asking for a high accuracy (e.g., 1.E-9), the resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
 |        |                   |                 |                    |                    |                    |
 
+At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
+
+| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
+| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
+|        |                   |                 |                    |                    |                    |
+
+These results have been executed with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
+
 ## Maros Meszaros problems
 These are the hard problems from the [Maros Meszaros testset](http://www.cuter.rl.ac.uk/Problems/marmes.shtml) converted using [CUTEst](https://ccpforge.cse.rl.ac.uk/gf/project/cutest/wiki) and the scripts in the [maros_meszaros_data/](./problem_classes/maros_meszaros_data) folder.
-In these benchmarks we compare OSQP with GUROBI and MOSEK.
 
 To execute these tests run
 ```python
@@ -69,11 +77,19 @@ python run_maros_meszaros_problems.py
 ```
 
 ### Results
-The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
+The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are when asking for a high accuracy (e.g., 1.E-9)
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
 |        |                   |                 |                    |                    |                    |
+
+At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
+
+| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
+| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
+|        |                   |                 |                    |                    |                    |
+
+These results have been executed as well with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
 
 ## Citing
 
