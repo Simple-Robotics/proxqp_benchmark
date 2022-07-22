@@ -28,8 +28,7 @@ class RandomMixedQPExample(object):
         P = (P+P.T)/2.  
      
         s = max(np.absolute(np.linalg.eigvals(P)))
-        self.P = spa.coo_matrix(P) + (abs(s)+1e-02) * spa.eye(n) # to be sure being strictly convex
-        print("sparsity of P : {}".format((self.P.nnz)/(n**2)))
+        self.P = spa.csc_matrix(P) + (abs(s)+1e-02) * spa.eye(n) # to be sure being strictly convex
         self.q = np.random.randn(n)
         self.A = spa.random(m, n, density=sparsity,data_rvs=np.random.randn,format='csc')
         v = np.random.randn(n)   # Fictitious solution

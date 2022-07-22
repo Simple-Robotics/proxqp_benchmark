@@ -36,7 +36,7 @@ print('parallel', parallel)
 
 # Add high accuracy solvers when accuracy
 if high_accuracy:
-    solvers =  [s.quadprog,s.OSQP,s.PROXQP]
+    solvers = [s.MOSEK,s.GUROBI,s.quadprog,s.OSQP,s.PROXQP]
     OUTPUT_FOLDER ='benchmark_problems_high_accuracy'
     for key in s.settings:
         s.settings[key]['high_accuracy'] = True
@@ -56,8 +56,8 @@ sparsity = 0.15
 
 # Run benchmark problems
 problems = [
-            'Random Degenerate QP',
-            'Random Not Strongly Convex QP',
+            #'Random Degenerate QP',
+            #'Random Not Strongly Convex QP'
             'Random Mixed QP'
             ]
 

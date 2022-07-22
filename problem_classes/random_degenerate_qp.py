@@ -27,13 +27,13 @@ class RandomDegenerateQPExample(object):
         P = (P+P.T)/2.         
         #s = max(np.absolute(np.linalg.eigvals(P)))
         s = min(np.linalg.eigvals(P))   
-        self.P = spa.coo_matrix(P) + (abs(s)+1e-02) * spa.eye(n)
-
+        P += (abs(s)+1e-02) * spa.eye(n) 
+        self.P = spa.csc_matrix(P)
         self.q = np.random.randn(n)
         C = spa.random(n_in, n, density=sparsity,
                             data_rvs=np.random.randn,
                             format='csc')
-        # make sure the matrix rank deficient
+        # make sure the matrix rank is deficient
         self.A = spa.csc_matrix(np.vstack([C.toarray(),C.toarray()]))
         
         v = np.random.randn(n)   # Fictitious solution
@@ -42,7 +42,7 @@ class RandomDegenerateQPExample(object):
         sol = self.A@v
 
         self.u = sol + delta
-        self.l =  - 1.E20 * np.ones(m) 
+        self.l = -1.E20 * np.ones(m)
 
         self.qp_problem = self._generate_qp_problem()
         self.cvxpy_problem = self._generate_cvxpy_problem()

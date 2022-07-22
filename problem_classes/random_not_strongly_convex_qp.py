@@ -25,11 +25,11 @@ class RandomNotStronglyConvexQPExample(object):
         P = (P+P.T)/2.         
         s = min(np.linalg.eigvals(P)) 
         if (s<0.):
-            self.P = spa.coo_matrix(P) + abs(s) * spa.eye(n) # get eigenvalue = 0 to be not strictly convex
+            self.P = spa.csc_matrix(P) + abs(s) * spa.eye(n) # set minimal eigenvalues = 0 to be not strictly convex
         elif (s==0.):
-            self.P = spa.coo_matrix(P) # already not strictly convex
+            self.P = spa.csc_matrix(P) # already not strictly convex
         else:
-            self.P = spa.coo_matrix(P) - abs(s) * spa.eye(n)
+            self.P = spa.csc_matrix(P) - abs(s) * spa.eye(n)
         self.A = spa.random(m, n, density=sparsity,
                             data_rvs=np.random.randn,
                             format='csc')

@@ -114,25 +114,21 @@ class qpOASESSolver(object):
         qpoases_m.setOptions(options) 
 
         if 'time_limit' not in self._settings:
-            # Set default to max 10 seconds in runtime
-            qpoases_cpu_time = np.array([10.])
+            # Set default to max 1000 seconds in runtime
+            qpoases_cpu_time = np.array([1000.])
 
         if 'nWSR' not in self._settings:
             # Set default to max 1000000 working set recalculations
             qpoases_nWSR = np.array([1000000])
 
         # Solve problem
-        tic = time.time()
+        # cannot use a for loop with qpOASES without getting an error
         status = qpoases_m.init(P, q, A, lx, ux, l, u,
-                                qpoases_nWSR, qpoases_cpu_time)
-        toc = time.time()
-        total_time = toc-tic
+                            qpoases_nWSR, qpoases_cpu_time)
         # Check status
         status = self.STATUS_MAP.get(status, s.SOLVER_ERROR)
-
         # run_time
-        run_time = total_time#qpoases_cpu_time[0]
-
+        run_time = qpoases_cpu_time[0]
         # number of iterations
         niter = qpoases_nWSR[0]
 

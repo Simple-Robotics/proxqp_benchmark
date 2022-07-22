@@ -63,42 +63,35 @@ class PROXQPSolver(object):
         NegInfId = lb == -math.inf 
         ub[PlusInfId] = 1.e20
         lb[NegInfId] = -1.e20
-
         H = problem['P']
         g = problem['q']
         A = problem['A'][eq_ids,:]
-        b = lb[eq_ids]
-        C = problem['A'][in_ids,:]
+        b = lb[eq_ids] 
+        C = problem['A'][in_ids,:] 
         l = lb[in_ids]
         u = ub[in_ids]
-
         n = H.shape[0]
         n_eq = A.shape[0]
         n_in = C.shape[0]
-
+        
         if (self._settings['dense']):
             Qp = proxsuite.qp.dense.QP(n,n_eq,n_in)
         else:
             Qp = proxsuite.qp.sparse.QP(n,n_eq,n_in)
-            
+        
+        Qp = proxsuite.qp.dense.QP(n,n_eq,n_in) 
         Qp.settings.eps_abs = self._settings['eps_abs']
         Qp.settings.eps_rel = self._settings['eps_rel']
         Qp.settings.verbose = self._settings['verbose'] 
         Qp.settings.initial_guess = self._settings["initial_guess"]
 
-        Qp.init(
-                H,
-                np.asfortranarray(g),
-                A,
-                np.asfortranarray(b),
-                C,
-                np.asfortranarray(u),
-                np.asfortranarray(l)
-        )
-        Qp.solve()
-        run_time = Qp.results.info.solve_time + Qp.results.info.setup_time
+        run_time = 0
+        Qp.init(H,g,A,b,C,u,l)
+        for i in range(n_average):
+            Qp.solve()
+            run_time += Qp.results.info.solve_time + Qp.results.info.setup_time
         # duration time
-        run_time /= 1.e6 # the run_time is measured in microseconds 
+        run_time /= (1.e6*n_average) # the run_time is measured in microseconds 
 
         # Obj val
         objval = Qp.results.info.objValue
@@ -109,7 +102,6 @@ class PROXQPSolver(object):
         # Get solution
         x = Qp.results.x 
         y = np.zeros(n_eq+n_in)
-
         y[eq_ids] = Qp.results.y
         y[in_ids] = Qp.results.z
 

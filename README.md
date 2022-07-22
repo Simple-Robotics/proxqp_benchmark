@@ -13,10 +13,10 @@ The whole API comes from the one developped by the authors of [OSQP](https://git
 
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
 
-To run these scripts you need the standard python libraries: `pandas`, `matplotlib`, `numpy`, `scipy`, `scikit-learn`, and `cvxpy`, which can be installed using for example conda:
+To run these scripts you need standard python libraries: `pandas`, `matplotlib`, `numpy`, `scipy`, `scikit-learn`, and `cvxpy`, which can be installed using for example conda:
 ```bash
-conda install pandas matplotlib numpy scipy cvxpy
-```
+conda install pandas matplotlib numpy scipy cvxpy scikit-learn
+``` 
 You need further as well to install the solvers `gurobi`, `mosek`, `OSQP`, `qpOASES` and `quadprog`. The first four can be installed for example using conda:
 ```bash
 conda config --add channels https://conda.anaconda.org/gurobi
@@ -55,10 +55,9 @@ python run_benchmark_problems.py
 ### Results
 The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
 
-| PROXQP | OSQP              | GUROBI          | MOSEK              | qpOASES            |
-| -----  | ----------------- | --------------- | ------------------ | ------------------ |
-|        |                   |                 |                    |                    |
-
+| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
+| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
+|        |                   |                 |                    |                    |                    |
 
 ## Maros Meszaros problems
 These are the hard problems from the [Maros Meszaros testset](http://www.cuter.rl.ac.uk/Problems/marmes.shtml) converted using [CUTEst](https://ccpforge.cse.rl.ac.uk/gf/project/cutest/wiki) and the scripts in the [maros_meszaros_data/](./problem_classes/maros_meszaros_data) folder.
@@ -72,14 +71,14 @@ python run_maros_meszaros_problems.py
 ### Results
 The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are
 
-| PROXQP             | OSQP   | GUROBI            |
-| ------------------ | ------ | ----------------- |
-|                    |        |                   |
+| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
+| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
+|        |                   |                 |                    |                    |                    |
 
 ## Citing
 
 If you are using these benchmarks for your work, please cite the [ProxQP paper](https://arxiv.org/pdf/1711.08013.pdf):
-\code
+```bash
 @inproceedings{bambade:hal-03683733,
   TITLE = {{PROX-QP: Yet another Quadratic Programming Solver for Robotics and beyond}},
   AUTHOR = {Antoine Bambade, Sarah El-Kazdadi, Adrien Taylor, Justin Carpentier},
@@ -92,4 +91,4 @@ If you are using these benchmarks for your work, please cite the [ProxQP paper](
   HAL_ID = {hal-03683733},
   HAL_VERSION = {v1},
 }
-\endcode
+```

@@ -24,7 +24,7 @@ class OSQPSolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example,n_average):
+    def solve(self, example,n_average,eps):
         '''
         Solve problem
 
@@ -45,16 +45,19 @@ class OSQPSolver(object):
                 **settings)
 
         # Solve
-        results = m.solve()
-        run_time = results.info.run_time + results.info.setup_time
-
+        run_time = 0
+        for i in range(n_average):
+            results = m.solve()
+            run_time += results.info.run_time + results.info.setup_time
+        run_time /= n_average
+        
         status = self.STATUS_MAP.get(results.info.status_val, s.SOLVER_ERROR)
 
         if status in s.SOLUTION_PRESENT:
             if not is_qp_solution_optimal(problem,
                                           results.x,
                                           results.y,
-                                          high_accuracy=high_accuracy):
+                                          eps):
                 status = s.SOLVER_ERROR
 
         # Verify solver time
@@ -67,7 +70,6 @@ class OSQPSolver(object):
                                  results.info.obj_val,
                                  results.x,
                                  results.y,
-                                 #results.info.run_time,
                                  run_time,
                                  results.info.iter)
 

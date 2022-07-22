@@ -27,7 +27,7 @@ class MOSEKSolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example,n_average):
+    def solve(self, example,n_average,eps):
         '''
         Solve problem
 
@@ -108,10 +108,7 @@ class MOSEKSolver(object):
             task.putqobj(P.row, P.col, P.data)
 
         # Set problem minimization
-        #tic = time.time()
         task.putobjsense(mosek.objsense.minimize)
-        #toc = time.time()
-        #total_time = toc-tic
         '''
         Set parameters
         '''
@@ -131,6 +128,7 @@ class MOSEKSolver(object):
         try:
             # Optimization and check termination code
             termination_code = task.optimize()
+            run_time= task.getdouinf(mosek.dinfitem.optimizer_time)
         except:
             if self._settings['verbose']:
                 print("Error in MOSEK solution\n")
@@ -160,7 +158,7 @@ class MOSEKSolver(object):
             status = s.TIME_LIMIT
 
         # Get statistics
-        cputime = task.getdouinf(mosek.dinfitem.optimizer_time)
+        #cputime = task.getdouinf(mosek.dinfitem.optimizer_time)
         total_iter = task.getintinf(mosek.iinfitem.intpnt_iter)
 
         if status in s.SOLUTION_PRESENT:
@@ -175,20 +173,19 @@ class MOSEKSolver(object):
             # it appears signs are inverted
             y = -y
 
-            if not is_qp_solution_optimal(p, x, y,
-                                          high_accuracy=self._settings.get('high_accuracy')):
+            if not is_qp_solution_optimal(p, x, y,eps):
                 status = s.SOLVER_ERROR
 
             # Validate execution time (do not trust commercial solvers)
             if 'time_limit' in self._settings:
-                if cputime > self._settings['time_limit']:
+                if run_time > self._settings['time_limit']:
                     status = s.TIME_LIMIT
 
             return Results(status, objval, x, y,
-                           cputime, total_iter)
+                           run_time, total_iter)
         else:
             return Results(status, None, None, None,
-                           cputime, None)
+                           run_time, None)
 
     # def choose_solution(self, task):
     #     """Chooses between the basic, interior point solution or integer solution

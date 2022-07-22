@@ -31,7 +31,7 @@ class Example(object):
                  solvers,
                  settings,
                  output_folder,
-                 n_instances=10,
+                 n_instances=5,
                  n_average=10,
                  sparsity=0.15):
         self.name = name
@@ -119,28 +119,33 @@ class Example(object):
                         else:
                             n_results = []
                             for instance in range(self.n_instances):
-                                    # solve n_solving times the same problem for having a good average of the solving time
-                                    run_time = 0
-                                    n_solving = n_average
-                                    #n_solving = 0
-                                    for i in range(n_solving-1):
+                                    # solve n_average times the same problem for having a good average of the runtime 
+                                    if (solver in ['qpOASES','GUROBI','MOSEK']):
+                                        run_time = 0
+                                        for i in range(n_average-1):
+                                            res = self.solve_single_example(n,self.sparsity,
+                                                                instance,
+                                                                solver,
+                                                                settings,
+                                                                eps
+                                                                )
+                                            run_time+=res.run_time
                                         res = self.solve_single_example(n,self.sparsity,
-                                                            instance,
-                                                            solver,
-                                                            settings,
-                                                            eps
-                                                            )
-                                        run_time+=res.run_time
-                                        
-                                    res = self.solve_single_example(n,self.sparsity,
-                                                            instance,
-                                                            solver,
-                                                            settings,
-                                                            eps
-                                                            )
-                                    run_time += res.run_time
-                                    run_time/= n_solving
-                                    res.run_time = run_time
+                                                                instance,
+                                                                solver,
+                                                                settings,
+                                                                eps
+                                                                )
+                                        run_time += res.run_time
+                                        run_time/= n_average
+                                        res.run_time = run_time
+                                    else:
+                                        res = self.solve_single_example(n,self.sparsity,
+                                                                instance,
+                                                                solver,
+                                                                settings,
+                                                                eps
+                                                                )
                                     n_results.append(
                                         res
                                     )   

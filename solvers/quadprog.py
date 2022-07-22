@@ -141,9 +141,10 @@ class QUADPROGSolver(object):
 
             factorize = False
             tic = time.time()
-            x, objval, xu, niter, y, iact = solve_qp(qp_G, qp_a, qp_C, qp_b, meq, factorize )
+            for i in range(n_average):
+                x, objval, xu, niter, y, iact = solve_qp(qp_G, qp_a, qp_C, qp_b, meq, factorize )
             toc = time.time()
-            run_time = toc - tic
+            run_time = (toc - tic)/n_average
             n_in = sum(in_ids)
             y_sol = np.zeros(meq+n_in)
 

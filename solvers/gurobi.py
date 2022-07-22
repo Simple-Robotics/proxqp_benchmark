@@ -31,7 +31,7 @@ class GUROBISolver(object):
         """Solver settings"""
         return self._settings
 
-    def solve(self, example,n_average):
+    def solve(self, example,n_average, eps):
         '''
         Solve problem
 
@@ -136,9 +136,9 @@ class GUROBISolver(object):
             if (param != "verbose") and (param != "time_limit") \
                     and (param != "high_accuracy"):
                 model.setParam(param, value)
-
         try:
             model.optimize()
+            run_time = model.Runtime 
         except:  # Error in the solution
             if self._settings['verbose']:
                 print("Error in GUROBI solution\n")
@@ -166,8 +166,7 @@ class GUROBISolver(object):
             constrs = model.getConstrs()
             y = -np.array([constrs[i].Pi for i in range(m)])
 
-            if not is_qp_solution_optimal(p, x, y,
-                                          high_accuracy=self._settings.get('high_accuracy')):
+            if not is_qp_solution_optimal(p, x, y,eps):
                 status = s.SOLVER_ERROR
 
             # Validate execution time (do not trust commercial solvers)
