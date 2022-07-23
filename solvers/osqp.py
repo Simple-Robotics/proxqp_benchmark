@@ -46,9 +46,20 @@ class OSQPSolver(object):
 
         # Solve
         run_time = 0
-        for i in range(n_average):
+        for i in range(n_average-1):
             results = m.solve()
-            run_time += results.info.run_time + results.info.setup_time
+            run_time += results.info.run_time
+            # in a multiple solve with the same initial setup osqp (i) does not re-factorize the problem (it uses its last previous version)
+            # and (ii) uses previous solutions from last solve
+            # it corresponds to the WARM_START_WITH_PREVIOUS_SOLUTION initial guess option of ProxQP (with dense backend)
+            # for fairness with respect with other solvers we re-create a OSQP object for re-starting the solve method with the same initial setup 
+            # (no warm start + one initial factorization as all other solvers benchmarked)
+            m = osqp.OSQP()
+            m.setup(problem['P'], problem['q'], problem['A'], problem['l'],
+                problem['u'],
+                **settings) 
+        results = m.solve()
+        run_time += results.info.run_time
         run_time /= n_average
         
         status = self.STATUS_MAP.get(results.info.status_val, s.SOLVER_ERROR)

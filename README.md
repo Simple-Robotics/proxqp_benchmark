@@ -54,30 +54,18 @@ python run_benchmark_problems.py
 
 ### Results
 
-For Convex Quadratic Programs with inequality and equality constraints, when asking for a high accuracy (e.g., 1.E-9), the resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are, for `sparse` problems (i.e., a ratio of sparsity of around 15%)
+For Convex Quadratic Programs with inequality and equality constraints, when asking for a high accuracy (e.g., 1.E-9), the resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) are, for `dense` problems 
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-|        |                   |                 |                    |                    |                    |
+| 1.0    | 9.7               | 10.8            | 2754.4             | 20284.5            | 150.3              |
 
-and for dense problems
-
-| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
-| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-|        |                   |                 |                    |                    |                    |
-
-
-At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are, for `sparser` problems
+and for `sparser` one (i.e., a ratio of sparsity of around 15%)
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-|        |                   |                 |                    |                    |                    |
+| 1.0    | 10.6              | 1.9             | 3785.7             | 41929.9            | 142.2              |
 
-and for dense problems
-
-| PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
-| -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-|        |                   |                 |                    |                    |                    |
 
 These results have been executed with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
 
@@ -94,13 +82,13 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-|        |                   |                 |                    |                    |                    |
+| 1.0    | 102.7             | 13.8            | 110.8              | 189.2              | 4.4                |
 
 At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-|        |                   |                 |                    |                    |                    |
+| 1.0    | 1091.4            | 76.7            | 450.7              | 124.0              | 12.1               |
 
 These results have been executed as well with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
 

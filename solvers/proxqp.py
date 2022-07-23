@@ -88,8 +88,9 @@ class PROXQPSolver(object):
         run_time = 0
         Qp.init(H,g,A,b,C,u,l)
         for i in range(n_average):
-            Qp.solve()
-            run_time += Qp.results.info.solve_time + Qp.results.info.setup_time
+            Qp.solve() # with the NO_INITIAL_GUESS option, the solve method here refactorizes the system always initially, and it starts with no warm start
+            # so the same problem is always resolved with the same initial setting
+            run_time += Qp.results.info.run_time
         # duration time
         run_time /= (1.e6*n_average) # the run_time is measured in microseconds 
 
