@@ -51,7 +51,7 @@ if verbose:
 maros_meszaros_runner = MarosMeszarosRunner(solvers,
                                             s.settings,
                                             OUTPUT_FOLDER)
-eps = 1.E-3
+eps = 1.E-9
 maros_meszaros_runner.solve(parallel=parallel, cores=12,n_average=1,eps=eps)
 
 # Compute results statistics

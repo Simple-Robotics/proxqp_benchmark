@@ -138,7 +138,6 @@ class GUROBISolver(object):
                 model.setParam(param, value)
         try:
             model.optimize()
-            run_time = model.Runtime 
         except:  # Error in the solution
             if self._settings['verbose']:
                 print("Error in GUROBI solution\n")
@@ -150,7 +149,7 @@ class GUROBISolver(object):
         status = self.STATUS_MAP.get(model.Status, s.SOLVER_ERROR)
 
         # Get computation time
-        #run_time = model.Runtime
+        run_time = model.Runtime
 
         # Total Number of iterations
         niter = model.BarIterCount

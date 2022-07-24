@@ -102,13 +102,6 @@ class MarosMeszarosRunner(object):
                                  PROBLEMS_FOLDER, problem)
                         instance = MarosMeszaros(full_name)
                         if (instance.qp_problem['P'].shape[0]<=1000 and instance.qp_problem['A'].shape[0] <= 1000 ): # to get a subset wchich dimension is bounded by 1000
-                            #these problem below are super slow to solve with OSQP at accuracy 1.E-9, it saturates without solving them
-                            if (solver=="OSQP"and False):
-                                if (not(problem in ["PRIMALC2","PRIMALC8","PRIMALC5","QSCAGR25","PRIMALC1","QSCFXM1","QSCTAP1","QGROW15","QSCAGR7","QSHARE2B"]) ):
-                                    results.append(self.solve_single_example(problem,
-                                                                 solver,
-                                                                 settings,n_average,eps))
-                            
                             results.append(self.solve_single_example(problem,
                                                                  solver,
                                                                  settings,n_average,eps))
