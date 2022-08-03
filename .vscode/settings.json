@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "chrono": "cpp",
+        "cstdint": "cpp",
+        "ctime": "cpp",
+        "ratio": "cpp",
+        "type_traits": "cpp",
+        "limits": "cpp"
+    }
+}

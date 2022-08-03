@@ -4,7 +4,7 @@ from solvers.osqp import OSQPSolver
 from solvers.qpoases import qpOASESSolver
 from solvers.proxqp import PROXQPSolver
 from solvers.quadprog import QUADPROGSolver
-import proxsuite_pywrap as proxsuite
+import proxsuite_pywrap_avx2 as proxsuite
 
 GUROBI = 'GUROBI'
 OSQP = 'OSQP'
@@ -32,14 +32,14 @@ settings = {
               'eps_rel': 0.,
               'verbose':False,
               'dense' : True,
-              'initial_guess': proxsuite.qp.NO_INITIAL_GUESS,
+              'initial_guess': proxsuite.proxqp.NO_INITIAL_GUESS,
               'bcl_update' : True
     },
     PROXQP_sparse: {'eps_abs': eps_high,
               'eps_rel': 0.,
               'verbose':False,
               'dense':False,
-              'initial_guess': proxsuite.qp.NO_INITIAL_GUESS,
+              'initial_guess': proxsuite.proxqp.NO_INITIAL_GUESS,
               'bcl_update' : True
     },
     OSQP: {'eps_abs': eps_high,

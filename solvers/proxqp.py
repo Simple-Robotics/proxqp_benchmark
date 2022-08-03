@@ -1,5 +1,5 @@
 #import proxsuite 
-import proxsuite_pywrap as proxsuite
+import proxsuite_pywrap_avx2 as proxsuite
 import numpy as np
 from . import statuses as s
 from .results import Results
@@ -75,11 +75,11 @@ class PROXQPSolver(object):
         n_in = C.shape[0]
         
         if (self._settings['dense']):
-            Qp = proxsuite.qp.dense.QP(n,n_eq,n_in)
+            Qp = proxsuite.proxqp.dense.QP(n,n_eq,n_in)
         else:
-            Qp = proxsuite.qp.sparse.QP(n,n_eq,n_in)
+            Qp = proxsuite.proxqp.sparse.QP(n,n_eq,n_in)
         
-        Qp = proxsuite.qp.dense.QP(n,n_eq,n_in) 
+        Qp = proxsuite.proxqp.dense.QP(n,n_eq,n_in) 
         Qp.settings.eps_abs = self._settings['eps_abs']
         Qp.settings.eps_rel = self._settings['eps_rel']
         Qp.settings.verbose = self._settings['verbose'] 
