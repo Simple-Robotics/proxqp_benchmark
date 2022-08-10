@@ -9,7 +9,7 @@ These are the scripts to compare the following Quadratic Program (QP) solvers
 -   qpOASES
 -   quadprog
 
-The whole API comes from the one developped by the authors of [OSQP](https://github.com/osqp/osqp_benchmarks/). We thanks them a lot for their rigorous approach.
+The whole API comes from the one developped by the authors of [OSQP](https://github.com/osqp/osqp_benchmarks/). We thank them a lot for their rigorous approach.
 
 The detailed description of these tests is available in [this paper](https://arxiv.org/pdf/1711.08013.pdf).
 
@@ -17,7 +17,7 @@ To run these scripts you need standard python libraries: `pandas`, `matplotlib`,
 ```bash
 conda install pandas matplotlib numpy scipy cvxpy scikit-learn
 ``` 
-You need further as well to install the solvers `gurobi`, `mosek`, `OSQP`, `qpOASES` and `quadprog`. The first four can be installed for example using conda:
+You need further as well to install the solvers `gurobi`, `mosek`, `OSQP`, `quadprog` and `qpOASES`. The first four can be installed for example using conda:
 ```bash
 conda install -c gurobi gurobi
 conda install -c mosek mosek
