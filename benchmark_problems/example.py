@@ -93,11 +93,11 @@ class Example(object):
                     settings['eps_abs'] = eps
                     settings['eps_rel'] = 0
                 elif solver == "MOSEK":
-                    settings["MSK_DPAR_INTPNT_CO_TOL_PFEAS"] = eps # cannot be put to 0..
-                    settings["MSK_DPAR_INTPNT_CO_TOL_DFEAS"] = eps # cannot be put to 0..
+                    settings["MSK_DPAR_INTPNT_CO_TOL_PFEAS"] = eps
+                    settings["MSK_DPAR_INTPNT_CO_TOL_DFEAS"] = eps
                 elif solver == "GUROBI":
-                    settings["FeasibilityTol"] = eps # cannot be put to 0..
-                    settings["OptimalityTol"] = eps # cannot be put to 0..
+                    settings["FeasibilityTol"] = eps
+                    settings["OptimalityTol"] = eps
 
                 print("solver : {} ; solvers:{} ; accuracy : {}".format(solver,self.solvers,eps))
                 for n in self.dims:

@@ -1,5 +1,4 @@
-#import proxsuite 
-import proxsuite_pywrap_avx2 as proxsuite
+import proxsuite 
 import numpy as np
 from . import statuses as s
 from .results import Results
