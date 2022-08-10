@@ -38,7 +38,7 @@ All the scripts come with options (default to `False`)
 Note that the parallel option has not be tested for the paper benchmarks.
 
 ## Benchmark problems
-The problems are all randomly generated as described in the PROXQP paper.
+The problems are all randomly generated as described in the [ProxQP paper](https://arxiv.org/pdf/1711.08013.pdf).
 Problem instances include
 
 -   Inequality and Equality Constrained QP,
@@ -83,6 +83,10 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
 | 1.0    | 102.7             | 13.8            | 110.8              | 189.2              | 4.4                |
+
+<p align="center">
+  <img src="./performance_profile_maros_meszaros_problems_high_accuracy.pdf" width="700" alt="maros_meszaros_problems_high_accuracy" align="center"/>
+</p>
 
 At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
 
