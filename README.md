@@ -85,7 +85,7 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 | 1.0    | 102.7             | 13.8            | 110.8              | 189.2              | 4.4                |
 
 <p align="center">
-  <img src="performance_profile_maros_meszaros_problems_high_accuracy.pdf" width="700" alt="maros_meszaros_problems_high_accuracy" align="center"/>
+  <img src="performance_profile_maros_meszaros_problems_high_accuracy.jpg" width="700" alt="maros_meszaros_problems_high_accuracy" align="center"/>
 </p>
 
 At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
