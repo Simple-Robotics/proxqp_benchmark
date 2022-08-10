@@ -58,13 +58,17 @@ For Convex Quadratic Programs with inequality and equality constraints, when ask
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-| 1.0    | 9.7               | 10.8            | 2754.4             | 20284.5            | 150.3              |
+| 1.0    | 20.4              | 18.2            | 5177.8             | 38131.0            | 282.6              |
+
+<p align="center">
+  <img src="time_series_barplot_Random Mixed QP_dense_high_accuracy.jpg" width="700" alt="Random Mixed QP_dense_high_accuracy" align="center"/>
+</p>
 
 and for `sparser` one (i.e., a ratio of sparsity of around 15%)
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-| 1.0    | 10.6              | 1.9             | 3785.7             | 41929.9            | 142.2              |
+| 1.0    | 19.3              | 3.5             | 6938.0             | 76844.2            | 260.6              |
 
 
 These results have been executed with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
@@ -82,7 +86,7 @@ The resulting [shifted geometric means](http://plato.asu.edu/ftp/shgeom.html) ar
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-| 1.0    | 102.7             | 13.8            | 110.8              | 189.2              | 4.4                |
+| 1.0    | 105.8             | 14.2            | 114.2              | 194.9              | 4.5                |
 
 <p align="center">
   <img src="performance_profile_maros_meszaros_problems_high_accuracy.jpg" width="700" alt="maros_meszaros_problems_high_accuracy" align="center"/>
@@ -92,7 +96,7 @@ At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
 
 | PROXQP | quadprog          | OSQP            | GUROBI             | MOSEK              | qpOASES            |
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
-| 1.0    | 1091.4            | 76.7            | 450.7              | 124.0              | 12.1               |
+| 1.0    | 1543.3            | 108.5           | 637.3              | 175.3              | 17.1               |
 
 These results have been executed as well with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
 
