@@ -19,8 +19,7 @@ conda install pandas matplotlib numpy scipy cvxpy scikit-learn
 ``` 
 You need further as well to install the solvers `gurobi`, `mosek`, `OSQP`, `qpOASES` and `quadprog`. The first four can be installed for example using conda:
 ```bash
-conda config --add channels https://conda.anaconda.org/gurobi
-conda install gurobi
+conda install -c gurobi gurobi
 conda install -c mosek mosek
 conda install -c conda-forge osqp
 conda install -c omnia quadprog
