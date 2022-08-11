@@ -70,7 +70,7 @@ and for `sparser` one (i.e., a ratio of sparsity of around 15%)
 | 1.0    | 19.3              | 3.5             | 6938.0             | 76844.2            | 260.6              |
 
 
-These results have been executed with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
+These results have been obtained with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
 
 ## Maros Meszaros problems
 These are the hard problems from the [Maros Meszaros testset](http://www.cuter.rl.ac.uk/Problems/marmes.shtml) converted using [CUTEst](https://ccpforge.cse.rl.ac.uk/gf/project/cutest/wiki) and the scripts in the [maros_meszaros_data/](./problem_classes/maros_meszaros_data) folder.
@@ -97,7 +97,7 @@ At lower accuracy (e.g., 1.E-3), the resulting shifted geometric means are
 | -----  | ----------------- | --------------- | ------------------ | ------------------ | ------------------ |
 | 1.0    | 1543.3            | 108.5           | 637.3              | 175.3              | 17.1               |
 
-These results have been executed as well with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
+These results have been obtained as well with a 11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz CPU.
 
 ## Citing
 
