@@ -42,7 +42,9 @@ def plot_performance_profiles(problems, solvers,problem_name):
     #results_file = './results/%s/%s.png' % (problems, problems)
     results_file = './results/%s/%s.pdf' % (problems , "performance_profile_"+problems+ '_' + problem_name)
     print("Saving plots to %s" % results_file)
-    plt.savefig(results_file)
+    lgd = plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.25),ncol=len(solvers))
+    plt.savefig(results_file,bbox_extra_artists=(lgd,),bbox_inches='tight',transparent=True)
+    #plt.savefig(results_file)
 
 
 def get_cumulative_data(solvers, problems, output_folder):
@@ -201,11 +203,12 @@ def compute_time_series_plot(solvers, problems_type, suffix):
     ax.minorticks_on()
     ax.grid( which='major', color='b', linestyle='-',axis="y")
     ax.grid( which='minor', color='grey', linestyle='--',axis="y")
-
+    #plt.legend(bbox_to_anchor =(0.5, -1.25))
     plt.show(block=False)
-    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + problems_type + suffix + ".pdf"
+    results_file = './results/benchmark_problems_high_accuracy/time_series_barplot_' + problems_type + suffix + ".jpg"
     print("Saving plots to %s" % results_file)
-    plt.savefig(results_file)
+    lgd = ax.legend(loc='lower center', bbox_to_anchor=(0.5, -0.25),ncol=len(solvers))
+    plt.savefig(results_file,bbox_extra_artists=(lgd,),bbox_inches='tight',transparent=True)
 
 def compute_time_series_plot_for_different_accuracies(solvers, problems_type, suffix):
     t = {}
