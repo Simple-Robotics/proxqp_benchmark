@@ -15,7 +15,6 @@ import solvers.solvers as s
 from utils.general import gen_int_log_space
 from utils.benchmark import compute_stats_info,compute_time_series_plot
 import argparse
-import proxsuite_pywrap as proxsuite
 
 parser = argparse.ArgumentParser(description='Benchmark Problems Runner')
 parser.add_argument('--high_accuracy', help='Test with high accuracy', default=True,

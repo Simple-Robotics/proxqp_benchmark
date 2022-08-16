@@ -55,8 +55,6 @@ class MarosMeszarosRunner(object):
         print("Solving Maros Meszaros problems")
         print("-------------------------------")
 
-
-
         if parallel:
             pool = Pool(processes=min(cores, cpu_count()))
 
@@ -67,11 +65,11 @@ class MarosMeszarosRunner(object):
                 settings['eps_abs'] = eps
                 settings['eps_rel'] = 0
             elif solver == "MOSEK":
-                settings["MSK_DPAR_INTPNT_CO_TOL_PFEAS"] = eps # cannot be put to 0..
-                settings["MSK_DPAR_INTPNT_CO_TOL_DFEAS"] = eps # cannot be put to 0..
+                settings["MSK_DPAR_INTPNT_CO_TOL_PFEAS"] = eps 
+                settings["MSK_DPAR_INTPNT_CO_TOL_DFEAS"] = eps 
             elif solver == "GUROBI":
-                settings["FeasibilityTol"] = eps # cannot be put to 0..
-                settings["OptimalityTol"] = eps # cannot be put to 0..
+                settings["FeasibilityTol"] = eps 
+                settings["OptimalityTol"] = eps 
 
             #  # Initialize solver results
             #  results_solver = []

@@ -2,7 +2,6 @@ import osqp
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
-from scipy import sparse
 
 
 class OSQPSolver(object):

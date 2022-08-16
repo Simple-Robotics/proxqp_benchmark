@@ -3,14 +3,9 @@ import numpy as np
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
-import math 
 from typing import Optional
 from warnings import warn
-from numpy import hstack,vstack, ndarray
 import time
-import scipy
-
-import numpy.linalg as la
 
 class QUADPROGSolver(object):
 
@@ -41,67 +36,7 @@ class QUADPROGSolver(object):
 
     def solve(self, example,n_average,eps):
         """
-        Solve a Quadratic Program defined as:
-        .. math::
-            \\begin{split}\\begin{array}{ll}
-            \\mbox{minimize} &
-                \\frac{1}{2} x^T P x + q^T x \\\\
-            \\mbox{subject to}
-                & G x \\leq h                \\\\
-                & A x = h
-            \\end{array}\\end{split}
-        using `quadprog <https://pypi.python.org/pypi/quadprog/>`_.
-        Parameters
-        ----------
-        P :
-            Symmetric quadratic-cost matrix.
-        q :
-            Quadratic-cost vector.
-        G :
-            Linear inequality constraint matrix.
-        h :
-            Linear inequality constraint vector.
-        A :
-            Linear equality constraint matrix.
-        b :
-            Linear equality constraint vector.
-        initvals :
-            Warm-start guess vector (not used).
-        verbose :
-            Set to `True` to print out extra information.
-        Returns
-        -------
-        :
-            Solution to the QP, if found, otherwise ``None``.
-        Note
-        ----
-        The quadprog solver only considers the lower entries of :math:`P`,
-        therefore it will use a different cost than the one intended if a
-        non-symmetric matrix is provided.
-        Notes
-        -----
-        All other keyword arguments are forwarded to the quadprog solver. For
-        instance, you can call ``quadprog_solve_qp(P, q, G, h, factorized=True)``.
-        See the solver documentation for details.
-
-        quadprog solve_qp function returns (see : https://github.com/quadprog/quadprog/blob/master/quadprog/quadprog.pyx)
-
-        x : array, shape=(n,)
-            vector containing the solution of the quadratic programming problem.
-        f : float
-            the value of the quadratic function at the solution.
-        xu : array, shape=(n,)
-            vector containing the unconstrained minimizer of the quadratic function
-        iterations : tuple
-            2-tuple. the first component contains the number of iterations the
-            algorithm needed, the second indicates how often constraints became
-            inactive after becoming active first.
-        lagrangian : array, shape=(m,)
-            vector with the Lagragian at the solution.
-        iact : array
-            vector with the indices of the active constraints at the solution.
-
-
+        Adapted from the wrapper written by Stéphane Caron : https://github.com/stephane-caron/qpsolvers/blob/master/qpsolvers/solvers/quadprog_.py 
         """
 
         problem = example.qp_problem
@@ -109,7 +44,7 @@ class QUADPROGSolver(object):
         g = problem['q']
         ub = problem['u']
         lb = problem['l']
-
+    
         eq_ids = lb == ub
         in_ids = lb != ub
         
@@ -121,20 +56,20 @@ class QUADPROGSolver(object):
 
         qp_G = H
         qp_a = -g
-        qp_C: Optional[ndarray] = None
-        qp_b: Optional[ndarray] = None
+        qp_C: Optional[np.ndarray] = None
+        qp_b: Optional[np.ndarray] = None
         if A is not None and b is not None:
             if C is not None and u is not None:
-                qp_C = -vstack([A,C, -C]).T
-                qp_b = -hstack([b, u, -l])
+                qp_C = -np.vstack([A,C, -C]).T
+                qp_b = -np.hstack([b, u, -l])
             else:
                 qp_C = A.T
                 qp_b = b
             meq = A.shape[0]
         else:  # no equality constraint
             if C is not None and u is not None:
-                qp_C = -vstack([C, -C]).T
-                qp_b = -hstack([u, -l])
+                qp_C = -np.vstack([C, -C]).T
+                qp_b = -np.hstack([u, -l])
             meq = 0
         try:         
             #qp_G = scipy.linalg.inv(scipy.linalg.cholesky(H))

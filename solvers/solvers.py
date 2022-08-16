@@ -4,9 +4,10 @@ from solvers.osqp import OSQPSolver
 from solvers.qpoases import qpOASESSolver
 from solvers.proxqp import PROXQPSolver
 from solvers.quadprog import QUADPROGSolver
-import proxsuite 
+import proxsuite
 
 GUROBI = 'GUROBI'
+
 OSQP = 'OSQP'
 MOSEK = 'MOSEK'
 qpOASES = 'qpOASES'
@@ -31,9 +32,7 @@ settings = {
     PROXQP: {'eps_abs': eps_high,
               'eps_rel': 0.,
               'verbose':False,
-              'dense' : True,
-              'initial_guess': proxsuite.proxqp.NO_INITIAL_GUESS,
-              'bcl_update' : True
+              'initial_guess': proxsuite.proxqp.NO_INITIAL_GUESS
     },
     OSQP: {'eps_abs': eps_high,
            'eps_rel': 0.,
@@ -50,7 +49,7 @@ settings = {
                  'MSK_DPAR_INTPNT_CO_TOL_PFEAS': eps_high,   # Primal feasibility tolerance
                  'MSK_DPAR_INTPNT_CO_TOL_DFEAS': eps_high,   # Dual feasibility tolerance
                 },
-    qpOASES: {},
+    qpOASES: {}, 
     quadprog: {}
 }
 

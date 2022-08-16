@@ -1,11 +1,8 @@
-import proxsuite 
+import proxsuite
 import numpy as np
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
-import math 
-import scipy
-import numpy
 
 def normInf(x):
   if x.shape[0] == 0:
@@ -51,17 +48,11 @@ class PROXQPSolver(object):
             Results structure
         '''
         problem = example.qp_problem
-
-        # preprocessing
         ub = np.copy(problem['u'])
         lb = np.copy(problem['l'])
-
         eq_ids = lb == ub
         in_ids = lb != ub
-        PlusInfId = ub == math.inf 
-        NegInfId = lb == -math.inf 
-        ub[PlusInfId] = 1.e20
-        lb[NegInfId] = -1.e20
+        
         H = problem['P']
         g = problem['q']
         A = problem['A'][eq_ids,:]
@@ -72,11 +63,6 @@ class PROXQPSolver(object):
         n = H.shape[0]
         n_eq = A.shape[0]
         n_in = C.shape[0]
-        
-        if (self._settings['dense']):
-            Qp = proxsuite.proxqp.dense.QP(n,n_eq,n_in)
-        else:
-            Qp = proxsuite.proxqp.sparse.QP(n,n_eq,n_in)
         
         Qp = proxsuite.proxqp.dense.QP(n,n_eq,n_in) 
         Qp.settings.eps_abs = self._settings['eps_abs']
@@ -89,6 +75,8 @@ class PROXQPSolver(object):
         for i in range(n_average):
             Qp.solve() # with the NO_INITIAL_GUESS option, the solve method here refactorizes the system always initially, and it starts with no warm start
             # so the same problem is always resolved with the same initial setting
+            # if one uses WARM_START_WITH_PREVIOUS_SOLUTION initial guess and n_average>1, the solve method will start at the previous solution and perform
+            # no factorization. For fairness with respect with other solvers, if this option is used, it is better then to put n_average=1 in order not to biase the timings results.
             run_time += Qp.results.info.run_time
         # duration time
         run_time /= (1.e6*n_average) # the run_time is measured in microseconds 

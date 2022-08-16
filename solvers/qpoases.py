@@ -3,7 +3,6 @@ import numpy as np
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal, stdout_redirected
-import time
 
 class qpOASESSolver(object):
 

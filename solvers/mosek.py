@@ -4,7 +4,6 @@ import scipy.sparse as spa
 from . import statuses as s
 from .results import Results
 from utils.general import is_qp_solution_optimal
-import time 
 
 class MOSEKSolver(object):
 
