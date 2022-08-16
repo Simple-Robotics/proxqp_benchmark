@@ -121,7 +121,7 @@ class Example(object):
                             for instance in range(self.n_instances):
                                     # solve n_average times the same problem for having a good average of the runtime 
                                     if (solver in ['qpOASES','GUROBI','MOSEK']):
-                                        # errors arise with these solvers if performing multiple solve inside each wrapper. So use an external loop for averaging the runtimes.
+                                        # generates errors with these solvers if performing multiple solve inside each wrapper. So use an external loop for averaging the runtimes.
                                         run_time = 0
                                         for i in range(n_average-1):
                                             res = self.solve_single_example(n,self.sparsity,

@@ -51,7 +51,7 @@ n_instances = 5
 n_dim = 10
 n_average = 10
 sparsity = 1 # control problem sparsity
-accuracies = [1.e-9] # control accuracy asked
+accuracies = [1.e-3] # control accuracy asked
 
 # Run benchmark problems
 problems = [

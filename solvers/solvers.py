@@ -31,8 +31,7 @@ eps_high = 1e-09
 settings = {
     PROXQP: {'eps_abs': eps_high,
               'eps_rel': 0.,
-              'verbose':False,
-              'initial_guess': proxsuite.proxqp.NO_INITIAL_GUESS
+              'verbose':False
     },
     OSQP: {'eps_abs': eps_high,
            'eps_rel': 0.,
