@@ -1,9 +1,7 @@
 import numpy as np
 import scipy.sparse as spa
 import cvxpy
-import sklearn.datasets as skd
-from scipy.stats import ortho_group
-
+import math
 
 class RandomMixedQPExample(object):
     '''
@@ -35,7 +33,7 @@ class RandomMixedQPExample(object):
         delta = np.random.rand(m)  # To get inequality
         self.u = self.A@v 
 
-        self.l = (- 1.E20 * np.ones(m)) 
+        self.l = (- 1.E20* np.ones(m)) 
         self.l[:n_eq] = self.u[:n_eq]
         self.u[n_eq:] += delta[n_eq:]
         
