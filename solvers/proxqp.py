@@ -71,7 +71,7 @@ class PROXQPSolver(object):
         Qp.settings.initial_guess = proxsuite.proxqp.NO_INITIAL_GUESS
 
         run_time = 0
-        Qp.init(H,g,A,b,C,u,l)
+        Qp.init(H,g,A,b,C,l,u)
         for i in range(n_average):
             Qp.solve() # with the NO_INITIAL_GUESS option, the solve method here refactorizes the system always initially, and it starts with no warm start
             # so the same problem is always resolved with the same initial setting
