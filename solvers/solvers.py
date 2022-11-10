@@ -1,13 +1,4 @@
-from solvers.gurobi import GUROBISolver
-from solvers.mosek import MOSEKSolver
-from solvers.osqp import OSQPSolver
-from solvers.qpoases import qpOASESSolver
-from solvers.proxqp import PROXQPSolver
-from solvers.quadprog import QUADPROGSolver
-import proxsuite
-
 GUROBI = 'GUROBI'
-
 OSQP = 'OSQP'
 MOSEK = 'MOSEK'
 qpOASES = 'qpOASES'
@@ -15,14 +6,39 @@ PROXQP = 'PROXQP'
 PROXQP_sparse = 'PROXQP_sparse'
 quadprog = 'quadprog'
 
-SOLVER_MAP = {OSQP: OSQPSolver,
-              GUROBI: GUROBISolver,
-              MOSEK: MOSEKSolver,
-              qpOASES: qpOASESSolver,
-              PROXQP : PROXQPSolver,
-              PROXQP_sparse:PROXQPSolver,
-              quadprog : QUADPROGSolver
-              }
+SOLVER_MAP = dict()
+
+try:
+  from solvers.gurobi import GUROBISolver
+  SOLVER_MAP[GUROBI] = GUROBISolver
+except ModuleNotFoundError:
+  pass
+try:
+  from solvers.mosek import MOSEKSolver
+  SOLVER_MAP[MOSEK] = MOSEKSolver
+except ModuleNotFoundError:
+  pass
+try:
+  from solvers.osqp import OSQPSolver
+  SOLVER_MAP[OSQP] = OSQPSolver
+except ModuleNotFoundError:
+  pass
+try:
+  from solvers.qpoases import qpOASESSolver
+  SOLVER_MAP[qpOASES] = qpOASESSolver
+except ModuleNotFoundError:
+  pass
+try:
+  from solvers.proxqp import PROXQPSolver
+  SOLVER_MAP[PROXQP] = PROXQPSolver
+  SOLVER_MAP[PROXQP_sparse] = PROXQPSolver
+except ModuleNotFoundError:
+  pass
+try:
+  from solvers.quadprog import QUADPROGSolver
+  SOLVER_MAP[quadprog] = QUADPROGSolver
+except ModuleNotFoundError:
+  pass
 
 time_limit = 1000. # Seconds
 eps_high = 1e-09
