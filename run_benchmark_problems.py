@@ -49,7 +49,7 @@ if verbose:
 # Number of instances per different dimension
 n_instances = 5
 n_dim = 10
-n_average = 10
+n_average = 100
 sparsity = 1 # control problem sparsity
 accuracies = [1.e-3] # control accuracy asked
 
