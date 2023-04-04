@@ -37,7 +37,7 @@ All the scripts come with options (default to `False`)
 Note that the parallel option has not be tested for the paper benchmarks.
 
 ## Benchmark problems
-The problems are all randomly generated as described in the [ProxQP paper](https://arxiv.org/pdf/1711.08013.pdf).
+The problems are all randomly generated as described in the [ProxQP paper](https://www.roboticsproceedings.org/rss18/p040.pdf).
 Problem instances include
 
 -   Inequality and Equality Constrained QP,
@@ -101,7 +101,7 @@ These results have been obtained as well with a 11th Gen Intel(R) Core(TM) i7-11
 
 ## Citing
 
-If you are using these benchmarks for your work, please cite the [ProxQP paper](https://arxiv.org/pdf/1711.08013.pdf):
+If you are using these benchmarks for your work, please cite the [ProxQP paper](https://www.roboticsproceedings.org/rss18/p040.pdf):
 ```bash
 @inproceedings{bambade:hal-03683733,
   TITLE = {{PROX-QP: Yet another Quadratic Programming Solver for Robotics and beyond}},
