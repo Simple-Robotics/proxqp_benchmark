@@ -69,6 +69,7 @@ class PROXQPSolver(object):
         Qp.settings.eps_rel = self._settings['eps_rel']
         Qp.settings.verbose = self._settings['verbose'] 
         Qp.settings.initial_guess = proxsuite.proxqp.NO_INITIAL_GUESS
+        Qp.settings.compute_timings = True
 
         run_time = 0
         Qp.init(H.toarray(),g,A.toarray(),b,C.toarray(),l,u)
