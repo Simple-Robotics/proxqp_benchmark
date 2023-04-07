@@ -93,7 +93,7 @@ class PROXQPSolver(object):
         y[eq_ids] = Qp.results.y
         y[in_ids] = Qp.results.z
 
-        if not is_qp_solution_optimal(problem, x, y, eps):
+        if not is_qp_solution_optimal(problem, x, y, eps, Qp.settings.eps_rel):
             status = s.SOLVER_ERROR
         # Verify solver time
             if 'time_limit' in self._settings:
